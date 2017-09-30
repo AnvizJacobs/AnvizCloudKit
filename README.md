@@ -32,10 +32,15 @@
 2. Put the directory file to site directory, input http://(site domain name)/webserver/wsdl.html in the browser, can be display wsdl pages means successful
 3. Power on the ddevice,and setup device network setting connect internet
 4. Enter into “network" - "cloud" menu follow the below setup
-> **User Name:**(Any Username)
-> **Password:**(Any Password)
-> **Server IP：** Mannual input
-> **Input IP: **(Site domain name，The site domain name must same as WSDL link For example WSD link address is http://localhost/demo/webserver/wsdl.html，then the Site domain is:localhost/demo)
+
+**User Name:**(Any Username)
+
+**Password:**(Any Password)
+
+**Server IP：** Mannual input
+
+**Input IP: **(Site domain name，The site domain name must same as WSDL link For example WSD link address is http://localhost/demo/webserver/wsdl.html，then the Site domain is:localhost/demo)
+
 5. Then on the device screen will display cloud connection ok
 6. And enter into site root directory log folder to check the device communicaiton logs with server
 
