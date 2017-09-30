@@ -38,6 +38,7 @@
 **Password:**(Any Password)
 
 **Server IP:** Mannual input
+
 **Input IP:**(Site domain name，The site domain name must same as WSDL link For example WSD link address is http://localhost/demo/webserver/wsdl.html, then the Site domain is:localhost/demo)
 
 5. Then on the device screen will display cloud connection ok
