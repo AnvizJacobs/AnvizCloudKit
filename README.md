@@ -47,7 +47,7 @@
 ### Develop Process
 1. Create a new custom callback and lead into interface.php,For example：
 > Create a new `demo.php`
-```
+```php
 <?php
 require_once("interface.php")
 class callback implements AnvizInterface
@@ -74,7 +74,8 @@ class callback implements AnvizInterface
 > `getNextCommand:` Every time the device communication with server need use this method to return the command which device need operate. When the teturn value is null the device will communication  with server in next 5 sec (heartbeat mode)，Packet method of the return instruction please refer to `Anviz Command` in `interface.php` folder
 
 > For example add below method in `callback` when you create `demo.php`(the Develop Process step.1 ) to get the network config information
-```
+```php
+<?php
 public function getNextCommand($device_id)
 {
 	$AnvizCommand = new AnvizCommand();
