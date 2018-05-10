@@ -8,11 +8,10 @@
  * Description:
  */
 
-require_once(dirname(__FILE__) . '/config.php');
-
 /**
  * The communication instructions of device
  */
+define('KEY', 'AnvizCloudForAttDevice');
 define('CMD_LOGIN', 9001);              //Login
 define('CMD_NOCOMMAND', 9002);          //Heartbeat
 define('CMD_FORBIDDEN', 9003);          //Disable connection
@@ -602,7 +601,7 @@ class Protocol
         $command = empty($command) ? '0000' : str_pad($command, 4, ' ', STR_PAD_LEFT);
         /** Next heartbeat packet send interval time */
         /** eg.（0，5，10，60，300）*/
-        $nextime = empty($command) ? '0005' : str_pad($nexttime, 4, ' ', STR_PAD_LEFT);
+        $nextime = empty($command) ? '0005' : str_pad($nexttime, 4, 0, STR_PAD_LEFT);
 
         $length = strlen($content);
         $length = str_pad($length, 8, 0x00, STR_PAD_LEFT);

@@ -1,4 +1,6 @@
-# Anviz device cloud PHP interface kit<img src="logo.png" style="height:30px;" align="right">
+<img src="logo.png" style="height:30px;" align="right" />
+
+# Anviz device cloud PHP interface kit
 
 ------------
 
@@ -6,83 +8,43 @@
 > `C2 Pro`/`W1`/`W2`/`OA1000`
 
 ### Environmental requirements
-> Apache + php(php version above 5.4 )
+> Apache + php(php version above 5.4)
 > Extended requirements: `php_soap`/`php_mcrypt`
 > support `rewrite`
 
 ### Directory File Description
-* `lib`            Library
-    * `config.php`          Configuration file
-	* `Protocol.php`        Protocol
-	* `SoapDiscovery.php`   PHP SOAP wsdl
-	* `Tools.php`           Method packets
-	* `Webserver.php`       Communction process
-* `logs`           Logs Directory
-* `sample`         Sample
-	* `index.php`           DEMO File
-	* `1`                   Test FP template
-* `.htaccess`      Distributed configuration file
-* `interface.php`  Callback interface
-* `README`         Description
-* `README.md`      Markdown format Description
-* `Webserver.php`  php soap server
+* `src`             API framework
+    * `lib`             Library
+        * `AnvizCommand.php`    Device command function
+        * `Logs.php`            Log class
+        * `Montitor.php`        Listen service
+        * `Protocol.php`        Protocol
+        * `SoapDiscovery.php`   PHP SOAP wsdl
+        * `Tools.php`           Method packets
+    * `config.sample.php`          Configure file
+    * `Webserver.php`       Communction process
+* `sample`          Sample
+    * `client`      Client
+    * `server`      Server
+        * `callback.php`    Callback class
+        * `Webserver.php`   Soap Server
+        * `.htaccess`       Route file
+    * `logs`        Logs directory
+    * `config.php`  Configure file
+    * `database.php`DB connect
+    * `db.sql`      DB file
 
 ### Testing process
-1. Deploy the Apache + php environment, Install "php_soap" Extended, "php-mcrypt" Extended and "rewrite" support
-2. Put the directory file to site directory, input http://(site domain name)/webserver/wsdl.html in the browser, can be display wsdl pages means successful
-3. Power on the ddevice,and setup device network setting connect internet
-4. Enter into “network" - "cloud" menu follow the below setup
-
-**User Name:**(Any Username)
-
-**Password:**(Any Password)
-
-**Server IP:** Mannual input
-
-**Input IP:**(Site domain name，The site domain name must same as WSDL link For example WSD link address is http://localhost/demo/webserver/wsdl.html, then the Site domain is:localhost/demo)
-
-5. Then on the device screen will display cloud connection ok
+1. Deploy the Apache + php environment, Install `php_soap` Extended, `php-mcrypt` Extended and `rewrite` support
+2. Put the directory file to site directory, input `http://(Site domain name)/sample/server/webserver/wsdl.html` in the browser, can be display wsdl pages means successful
+3. Open url `http://(站点域名)/sample/client/index.html` in brower. Register new user and record the device url, username and password
+3. Power on the device,and setup device network setting connect internet
+4. Enter into `network` - `cloud` menu follow the below setup
+    ```
+    User Name：（User name of the 3rd step）
+    密码：（Pasword of the 3rd step）
+    Server IP： Mannual input
+    Input IP: (Url of the 3rd step)
+    ```
+5. Then on the device screen will display cloud connection ok. Open url `http://(站点域名)/sample/client/index.html` in brower, now you can see the device in page.
 6. And enter into site root directory log folder to check the device communicaiton logs with server
-
-### Develop Process
-1. Create a new custom callback and lead into interface.php,For example：
-> Create a new `demo.php`
-```php
-<?php
-require_once("interface.php")
-class callback implements AnvizInterface
-{
-    ...
-    ...
-}
-?>
-```
->* Please reader `interface.php` to check the description of the callback
-2. Modify `lib/config.php` config file, the detail config please check `lib/config.php` description
-3. Add application logic in `demo.php`
-
-### lib/config.php description
-	`KEY`: Device communication key, enter device develop mode,the default develop `KEY` is "AnvizDevelopOpenKey" for test，when for business application please apply the official `key` from Anviz
-	`DEBUG`: Debug mode，when enable debug mode will print out a lot of log information under `logs` folder
-	`TIMEZONE`: Server time zone configuration
-	`CALLBACK_FILE`: The path of the callback file ，The path is the absolute path of the step1 `demo.php` file in the develop process
-	`CALLBACK_CLASS`: Name of callback it is defined named "callback" in develop process step1
-
-### interface.php the callback function description
-> The detail description of Callback function please check `interface.php`
-
-> `getNextCommand:` Every time the device communication with server need use this method to return the command which device need operate. When the teturn value is null the device will communication  with server in next 5 sec (heartbeat mode)，Packet method of the return instruction please refer to `Anviz Command` in `interface.php` folder
-
-> For example add below method in `callback` when you create `demo.php`(the Develop Process step.1 ) to get the network config information
-```php
-<?php
-public function getNextCommand($device_id)
-{
-	$AnvizCommand = new AnvizCommand();
-	$AnvizCommand->token = $this->getToken($device_id);     //Get current device Token value
-	$AnvizCommand->device_id = $device_id;
-	$AnvizCommand->task_id = substr(time(), -8);            //Current task flag NO.
-	return $AnvizCommand->getNetwork();
-}
-```
-* Please check `interface.php` description for another device function

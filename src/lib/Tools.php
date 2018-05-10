@@ -7,47 +7,9 @@
  * Time: 9:34
  * Description:
  */
-!defined('DEBUG') ? define('DEBUG', FALSE) : '';
 
 class Tools
 {
-    /**
-     * @Created by Jacobs <jacobs@anviz.com>
-     * @Name: log
-     * @param string $type
-     * @param string $message
-     * @return bool
-     * @Description:
-     */
-    public static function log($type = 'error', $message = '')
-    {
-
-        if (!DEBUG && ($type != 'error' || $type != 'warning')) {
-            return true;
-        }
-
-        $log_path = PATH . '/logs';
-        if (!is_dir($log_path) && !mkdir($log_path, '07777'))
-            return false;
-
-        if (is_array($message) || is_object($message))
-            $message = json_encode($message);
-
-        $filename = 'log_' . date('Ymd-H') . '.log';
-
-        $fp = fopen($log_path . '/' . $filename, 'a+');
-
-        fwrite($fp, date("m/d/Y H:i:s"));
-        fwrite($fp, "\t");
-        fwrite($fp, ucfirst($type));
-        fwrite($fp, "\t");
-        fwrite($fp, $message);
-        fwrite($fp, "\r\n");
-
-        fclose($fp);
-
-        return true;
-    }
 
     public static function uuid($prefix = '')
     {
@@ -81,6 +43,23 @@ class Tools
         }
 
         return $string;
+    }
+
+    public static function createCommandId()
+    {
+        $id = '';
+        $random = md5(time() . mt_rand(1, 99999999));
+        for ($j = 0; $j < 8; $j++) {
+            $b = mt_rand(0, strlen($random) - 1);
+            if ($random[$b] == "0") {
+                $id .= chr(rand(97, 102));
+            } elseif (ord($random[$b]) > 102) {
+                $id .= chr(rand(97, 102));
+            } else {
+                $id .= $random[$b];
+            }
+        }
+        return $id;
     }
 
     /**
