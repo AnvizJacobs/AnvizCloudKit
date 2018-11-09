@@ -11,7 +11,7 @@
 /**
  * The communication instructions of device
  */
-define('KEY', 'AnvizCloudForAttDevice');
+define('KEY', 'AnvizDemoKeyForDev');
 define('CMD_LOGIN', 9001);              //Login
 define('CMD_NOCOMMAND', 9002);          //Heartbeat
 define('CMD_FORBIDDEN', 9003);          //Disable connection
