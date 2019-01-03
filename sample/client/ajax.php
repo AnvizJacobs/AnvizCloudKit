@@ -14,8 +14,8 @@ if ($method == 'command_status') {
     $id = $_REQUEST['id'];
     if (!empty($id)) {
         $sql = 'SELECT * FROM device_command WHERE id="' . $id . '"';
-        $result = mysql_query($sql);
-        if (mysql_num_rows($result) <= 0) {
+        $result = $db->query($sql);
+        if ($db->num_rows($result) <= 0) {
             echo json_encode(array('success' => true));
         } else {
             echo json_encode(array('success' => false));
@@ -23,17 +23,17 @@ if ($method == 'command_status') {
     }
 } else {
     $sql = 'SELECT * from device';
-    $result = mysql_query($sql);
+    $result = $db->query($sql);
     $device = array();
-    if (mysql_num_rows($result) > 0) {
-        while ($row = mysql_fetch_array($result)) {
+    if ($db->num_rows($result) > 0) {
+        while ($row = $db->fetch_array($result)) {
             $id = $row['id'];
             $token = $row['token'];
             $lasttime = $row['lasttime'];
             $is_login = $row['is_login'];
             if ($lasttime <= time() - 30) {
                 $sql = 'UPDATE device SET is_login=0 WHERE id="' . $id . '"';
-                mysql_query($sql);
+                $db->query($sql);
                 $is_login = 0;
             }
 

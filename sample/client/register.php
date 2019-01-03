@@ -15,15 +15,15 @@ if ($_POST) {
         $errorMsg = 'Please enter the password';
     }else{
         $sql = 'SELECT count(*) as number FROM users WHERE email="'.$_POST['email'].'"';
-        $result = mysql_query($sql);
-        $row = mysql_fetch_array($result);
+        $result = $db->query($sql);
+        $row = $db->fetch_array($result);
         if($row['number'] > 0){
             $errorMsg = 'The email has been already';
         }else{
             $dusename = rand(10000000, 99999999);
             $dpassword = rand(10000000, 99999999);
             $sql = 'INSERT INTO users(email, password, dusername, dpassword) VALUES ("' . $_POST['email'] . '","' . $_POST['password'] . '", "'.$dusename.'", "'.$dpassword.'")';
-            mysql_query($sql);
+            $db->query($sql);
 
 
             if($_SERVER['SERVER_PORT'] == 443){

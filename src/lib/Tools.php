@@ -75,6 +75,7 @@ class Tools
         if (empty($key))
             return false;
 
+        $key = str_pad($key, 24, "\0", STR_PAD_RIGHT);
 
         $cipher_alg = MCRYPT_TRIPLEDES;
         $iv = mcrypt_create_iv(mcrypt_get_iv_size($cipher_alg, MCRYPT_MODE_ECB), MCRYPT_RAND);
@@ -96,6 +97,8 @@ class Tools
     {
         if (empty($key))
             return false;
+
+        $key = str_pad($key, 24, "\0", STR_PAD_RIGHT);
 
         $cipher_alg = MCRYPT_TRIPLEDES;
         $iv = mcrypt_create_iv(mcrypt_get_iv_size($cipher_alg, MCRYPT_MODE_ECB), MCRYPT_RAND);

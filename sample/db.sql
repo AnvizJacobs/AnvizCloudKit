@@ -58,7 +58,7 @@ CREATE TABLE `device_command` (
   `id` char(8) NOT NULL,
   `device_id` char(32) NOT NULL,
   `command` char(4) NOT NULL,
-  `content` text,
+  `content` longtext,
   `status` int(2) DEFAULT '0',
   `params` text,
   PRIMARY KEY (`id`)
@@ -113,7 +113,8 @@ CREATE TABLE `users` (
   `dusername` varchar(100) DEFAULT NULL,
   `dpassword` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -124,6 +125,62 @@ LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `employee`
+--
+
+DROP TABLE IF EXISTS `employee`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `employee` (
+  `idd` int(19) NOT NULL,
+  `passd` varchar(20) DEFAULT NULL,
+  `cardid` varchar(30) DEFAULT NULL,
+  `name` varchar(30) DEFAULT NULL,
+  `group_id` int(3) DEFAULT '0',
+  `fingersign` int(10) DEFAULT NULL,
+  `is_admin` int(2) DEFAULT '0',
+  PRIMARY KEY (`idd`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `employee`
+--
+
+LOCK TABLES `employee` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `employee_template`
+--
+
+DROP TABLE IF EXISTS `employee_template`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `employee_template` (
+  `idd` int(19) NOT NULL,
+  `sign` int(2) NOT NULL DEFAULT '1',
+  `temp_id` int(2) NOT NULL DEFAULT '0',
+  `content` text,
+  PRIMARY KEY (`idd`,`sign`,`temp_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `employee_template`
+--
+
+LOCK TABLES `employee_template` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

@@ -20,10 +20,15 @@ if (empty($id)) {
     <tr>
         <th>#</th>
         <th>idd</th>
-        <th>Check Time</th>
+        <th>Name</th>
+        <th>password</th>
+        <th>Card</th>
+        <th>Group</th>
+        <th>Finger Signed</th>
+        <th>Is Admin</th>
     </tr>
     <?php
-    $sql = 'SELECT * FROM records WHERE device_id="'.$id.'" ORDER BY checktime DESC';
+    $sql = 'SELECT * FROM employee ORDER BY idd ASC';
     $result = $db->query($sql);
     if($db->num_rows($result) > 0):
         $rowNumber = 1;
@@ -32,7 +37,12 @@ if (empty($id)) {
             <tr>
                 <td><?php echo $rowNumber;?></td>
                 <td><?php echo $row['idd'];?></td>
-                <td><?php echo date('m/d/Y H:i:s', $row['checktime']);?></td>
+                <td><?php echo $row['name'];?></td>
+                <td><?php echo $row['passd'];?></td>
+                <td><?php echo $row['cardid'];?></td>
+                <td><?php echo $row['group_id'];?></td>
+                <td><?php echo $row['fingersign'];?></td>
+                <td><?php echo $row['is_admin'];?></td>
             </tr>
             <?php
             $rowNumber++;

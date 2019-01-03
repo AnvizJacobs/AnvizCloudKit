@@ -79,7 +79,6 @@ class Montitor
             $this->log->write('error', 'actionTransport: The token has expires');
             return Protocol::showRegister($device_id);
         }
-
         $data = Protocol::explodeCommand($token, $data);
         if (!$data) {
             $this->log->write('error', 'actionTransport: The token has expires');
@@ -134,13 +133,17 @@ class Montitor
                 }
                 break;
             default:
+                if (!$this->callback->other($device_id, $data['id'])) {
+                    return Protocol::showError($token, $device_id, CMD_GETALLRECORD);
+                }
                 break;
         }
+
         /** Get the next command **/
         $data = $this->callback->getNextCommand($device_id);
         if (empty($data)) {
             $command = Protocol::showNocommand($token, $device_id);
-        }else{
+        } else {
             $command = Protocol::joinCommand($token, $device_id, $data['id'], $data['command'], 0, $data['content']);
         }
 

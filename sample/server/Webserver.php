@@ -5,9 +5,9 @@
  * Time: 16:08
  * File Name: Webserver.php
  */
-
 require(dirname(__FILE__) . '/../config.php');
 require(dirname(__FILE__) . '/../database.php');
+require(dirname(__FILE__) . '/../../src/lib/AnvizCommand.php');
 require(dirname(__FILE__) . '/../../src/Webserver.php');
 require(dirname(__FILE__) . '/callback.php');
 

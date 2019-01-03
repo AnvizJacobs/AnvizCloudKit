@@ -11,7 +11,7 @@
 /**
  * The communication instructions of device
  */
-define('KEY', 'AnvizDemoKeyForDev');
+define('KEY', 'AnvizDevelopOpenKey');
 define('CMD_LOGIN', 9001);              //Login
 define('CMD_NOCOMMAND', 9002);          //Heartbeat
 define('CMD_FORBIDDEN', 9003);          //Disable connection
@@ -172,7 +172,6 @@ class Protocol
 
         /** the total of employee in this acquisition */
         $count = strlen($content) / 40;
-        Tools::log('debug', 'Count:' . $count);
         for ($i = 0; $i < $count; $i++) {
             $row = substr($content, $i * 40, 40);
 
@@ -495,12 +494,12 @@ class Protocol
 
     public static function setFinger($finger)
     {
-        if (empty($finger) || empty($finger['idd']) || empty($finger['fp']))
+        if (empty($finger) || empty($finger['idd']) || empty($finger['template']))
             return false;
 
         $idd = $finger['idd'];
         $sign = empty($finger['sign']) ? 0 : $finger['sign'];
-        $fp = $finger['fp'];
+        $fp = $finger['template'];
 
         $pack = '';
         $pack .= pack("C", intval($idd / 0x00FFFFFFFF)) . pack("N", $idd & 0x00FFFFFFFF);

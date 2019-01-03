@@ -77,6 +77,36 @@ interface AnvizInterface
 
     /**
      * @return boolean
+     * @description Get Employee. By getEmployee will call back this method
+     * @param
+     *      id: string Device ID
+     *      task_id: TASK ID
+     *      records: array
+     *              array(
+     *                  array(
+     *                      'idd' => 1001,          //Employee ID on device
+     *                      'name' => 'demo',  //Attendance time. Unix timestamp
+     *                      'cardid' => '1234567890', //Card ID
+     *                      'passd' => '',  //Attendance password by Employee ID,
+     *                      'group_id' => '',   //The accesscontrol group id,
+     *                      'fingersign' => '',
+     *                      'is_admin' => 0,
+     *                  ),
+     *                  array(
+     *                      'idd' => 1001,          //Employee ID on device
+     *                      'name' => 'demo',  //Attendance time. Unix timestamp
+     *                      'cardid' => '1234567890', //Card ID
+     *                      'passd' => '',  //Attendance password by Employee ID,
+     *                      'group_id' => '',   //The accesscontrol group id,
+     *                      'fingersign' => '',
+     *                      'is_admin' => 0,
+     *                  ),
+     *              )
+     */
+    public function employee($id, $command_id, $data);
+
+    /**
+     * @return boolean
      * @description Every time the device links with the server, it will start the event.
      * @param
      *      id: string Device ID

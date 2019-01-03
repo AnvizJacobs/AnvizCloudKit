@@ -36,13 +36,13 @@ require('common/header.php');
                     </tr>
                     <?php
                         $sql = 'SELECT device.*, users.email FROM device device LEFT JOIN users users ON users.id=device.user_id';
-                        $result = mysql_query($sql);
-                        if(mysql_num_rows($result) > 0):
+                        $result = $db->query($sql);
+                        if($db->num_rows($result) > 0):
                             $rowNumber = 1;
-                            while($row = mysql_fetch_array($result)):
+                            while($row = $db->fetch_array($result)):
                                 if($row['is_login'] == 1 && $row['lasttime'] <= time() - 30){
                                     $sql = 'UPDATE device SET is_login=0 WHERE id="'.$row['id'].'"';
-                                    mysql_query($sql);
+                                    $db->query($sql);
                                     $row['is_login'] = 0;
                                 }
                     ?>
@@ -84,10 +84,10 @@ require('common/header.php');
                     </tr>
                     <?php
                     $sql = 'SELECT * FROM users';
-                    $result = mysql_query($sql);
-                    if(mysql_num_rows($result) > 0):
+                    $result = $db->query($sql);
+                    if($db->num_rows($result) > 0):
                         $rowNumber = 1;
-                        while($row = mysql_fetch_array($result)):
+                        while($row = $db->fetch_array($result)):
                             ?>
                             <tr>
                                 <td><?php echo $rowNumber;?></td>
