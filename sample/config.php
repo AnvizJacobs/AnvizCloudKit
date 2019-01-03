@@ -5,8 +5,8 @@
  * Time: 17:05
  * File Name: config.php
  */
-
-$config['db']['host'] = 'mysql:3306';
+$config['db']['dbdriver'] = 'mysqli';
+$config['db']['host'] = 'localhost:3306';
 $config['db']['dbname'] = 'sdkdemo';
 $config['db']['username'] = 'root';
 $config['db']['password'] = 'root';
