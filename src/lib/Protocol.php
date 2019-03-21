@@ -555,22 +555,22 @@ class Protocol
 
     public static function showRegister($device_id)
     {
-        return Tools::R(self::joinCommand('11111111', $device_id, '11111111', CMD_REGESTER, 1, 0, ''));
+        return Tools::R(self::joinCommand('11111111', $device_id, '11111111', CMD_REGESTER, 1, ''));
     }
 
     public static function showError($sha1, $device_uuid, $command = '')
     {
-        return Tools::R(self::joinCommand($sha1, $device_uuid, '11111111', CMD_ERROR, 5, 0, $command));
+        return Tools::R(self::joinCommand($sha1, $device_uuid, '11111111', CMD_ERROR, 5, $command));
     }
 
     public static function showForbidden()
     {
-        return Tools::R(self::joinCommand('11111111', '0', '22222222', CMD_FORBIDDEN, 5, 0, ''));
+        return Tools::R(self::joinCommand('11111111', '0', '22222222', CMD_FORBIDDEN, 5, ''));
     }
 
     public static function showNocommand($token, $device_id)
     {
-        return Protocol::joinCommand($token, $device_id, '11111111', CMD_NOCOMMAND, 5, 0);
+        return Protocol::joinCommand($token, $device_id, '11111111', CMD_NOCOMMAND, 5);
     }
 
     /**
