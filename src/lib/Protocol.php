@@ -42,10 +42,12 @@ define('CMD_GETNEWRECORD', 3002);       //Download new attendance records from d
 class Protocol
 {
     /**
-     * @Created by Jacobs <jacobs@anviz.com>
-     * @Name: explodeCommand
+     * @Created    by Jacobs <jacobs@anviz.com>
+     * @Name       : explodeCommand
+     *
      * @param $token
      * @param $data
+     *
      * @return bool
      * @Description:
      */
@@ -69,9 +71,11 @@ class Protocol
     }
 
     /**
-     * @Created by Jacobs <jacobs@anviz.com>
-     * @Name: RegisterDevice
+     * @Created    by Jacobs <jacobs@anviz.com>
+     * @Name       : RegisterDevice
+     *
      * @param string $data
+     *
      * @return array|bool
      * @Description:
      */
@@ -96,9 +100,11 @@ class Protocol
     }
 
     /**
-     * @Created by Jacobs <jacobs@anviz.com>
-     * @Name: LoginDevice
+     * @Created    by Jacobs <jacobs@anviz.com>
+     * @Name       : LoginDevice
+     *
      * @param string $content
+     *
      * @return array|bool
      * @Description:
      */
@@ -116,9 +122,11 @@ class Protocol
     }
 
     /**
-     * @Created by Jacobs <jacobs@anviz.com>
-     * @Name: NetworkDevice
+     * @Created    by Jacobs <jacobs@anviz.com>
+     * @Name       : NetworkDevice
+     *
      * @param string $content
+     *
      * @return array|bool
      * @Description:
      */
@@ -148,9 +156,11 @@ class Protocol
     }
 
     /**
-     * @Created by Jacobs <jacobs@anviz.com>
-     * @Name: EmployeeDevice
+     * @Created    by Jacobs <jacobs@anviz.com>
+     * @Name       : EmployeeDevice
+     *
      * @param string $content
+     *
      * @return array|bool
      * @Description:
      */
@@ -226,9 +236,11 @@ class Protocol
     }
 
     /**
-     * @Created by Jacobs <jacobs@anviz.com>
-     * @Name: FingerDevice
+     * @Created    by Jacobs <jacobs@anviz.com>
+     * @Name       : FingerDevice
+     *
      * @param string $content
+     *
      * @return array|bool
      * @Description:
      */
@@ -298,9 +310,11 @@ class Protocol
     }
 
     /**
-     * @Created by Jacobs <jacobs@anviz.com>
-     * @Name: RecordDevice
+     * @Created    by Jacobs <jacobs@anviz.com>
+     * @Name       : RecordDevice
+     *
      * @param string $content
+     *
      * @return array|bool
      * @Description:
      */
@@ -334,6 +348,37 @@ class Protocol
             //$record['checktype'] = ord($row[9]);
             /** Work Type */
             //$record['worktype'] = ord($row[10]);
+
+            $result[$i] = $record;
+        }
+
+        return $result;
+    }
+
+    public static function RecordImport($content = ''){
+        if (empty($content))
+            return false;
+
+        /**
+         * The length of each record is 16
+         * if the length of data can not be 16 whole, it's dirty data
+         */
+        if ((strlen($content) - 3) % 14 != 0) {
+            return false;
+        }
+        $result = array();
+
+        $count = (ord($content[0]) << 16) + (ord($content[1]) << 8) + ord($content[2]);
+        for($i = 0; $i < $count; $i++){
+            $row = substr($content, $i * 14 + 3, 14);
+
+            $record = array();
+
+            /** ID On Device */
+            $record['idd'] = (ord($row[0]) << 32) + (ord($row[1]) << 24) + (ord($row[2]) << 16) + (ord($row[3]) << 8) + ord($row[4]);
+            /** Check Time */
+            $record['checktime'] = (ord($row[5]) << 24) + (ord($row[6]) << 16) + (ord($row[7]) << 8) + ord($row[8]);
+            $record['checktime'] = $record['checktime'] + strtotime('2000-01-02 00:00:00');
 
             $result[$i] = $record;
         }
@@ -574,15 +619,17 @@ class Protocol
     }
 
     /**
-     * @Created by Jacobs <jacobs@anviz.com>
-     * @Name: joinCommand
-     * @param $sha1         Token value
-     * @param $device_id
-     * @param $id
-     * @param $command
-     * @param $nexttime
-     * @param int $length
+     * @Created    by Jacobs <jacobs@anviz.com>
+     * @Name       : joinCommand
+     *
+     * @param        $sha1         Token value
+     * @param        $device_id
+     * @param        $id
+     * @param        $command
+     * @param        $nexttime
+     * @param int    $length
      * @param string $content
+     *
      * @return bool|string
      * @Description:
      */

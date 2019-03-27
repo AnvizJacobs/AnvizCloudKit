@@ -174,4 +174,43 @@ if ($command == 'downloadAllRecords') {
             )
         ));
     }
+} elseif ($command == 'importBackFile') {
+    if(empty($_FILES) || empty($_FILES['file'])){
+        echo json_encode(array(
+            'success' => false
+        ));
+        exit;
+    }
+    $content = file_get_contents($_FILES['file']['tmp_name']);
+    if(empty($content)){
+        echo json_encode(array(
+            'success' => false
+        ));
+        exit;
+    }
+
+    $data = Protocol::RecordImport($content);
+
+    $sql = 'SELECT * FROM device WHERE id="' . $device_id . '"';
+    $result = $db->query($sql);
+    if ($db->num_rows($result) <= 0)
+        return false;
+
+    $device = $db->fetch_array($result);
+    $user_id = $device['user_id'];
+
+    foreach ($data as $row) {
+        $idd = $row['idd'];
+        $checktime = $row['checktime'];
+
+        $sql = 'SELECT * FROM records WHERE idd="' . $idd . '" AND device_id="' . $device_id . '" AND checktime="' . $checktime . '"';
+        $result = $db->query($sql);
+        if ($db->num_rows($result) > 0)
+            continue;
+
+        $sql = 'INSERT INTO records(idd, device_id, checktime, user_id) VALUES ("' . $idd . '", "' . $device_id . '", "' . $checktime . '", "' . $user_id . '")';
+        $db->query($sql);
+    }
+
+    header('Location:device.php?id='.$device_id);
 }

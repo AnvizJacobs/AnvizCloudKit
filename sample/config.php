@@ -6,7 +6,7 @@
  * File Name: config.php
  */
 $config['db']['dbdriver'] = 'mysqli';
-$config['db']['host'] = 'localhost:3306';
+$config['db']['host'] = 'mysql:3306';
 $config['db']['dbname'] = 'sdkdemo';
 $config['db']['username'] = 'root';
 $config['db']['password'] = 'root';

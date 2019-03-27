@@ -48,6 +48,7 @@ class Montitor
         $token = $device['token'];
         $id = $device['id'];
         $this->log->write('info', 'actionRegister: Register Success!');
+        $this->log->write('info', 'actionRegister: Device Info:'.json_encode($device));
 
         /** Return to let device to login system */
         $command = Protocol::joinCommand($token, $id, '11111111', CMD_LOGIN, 0, $id);

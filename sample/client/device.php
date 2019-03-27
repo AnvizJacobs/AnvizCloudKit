@@ -70,7 +70,7 @@ $device = $db->fetch_array($result);
                                                           data-toggle="tab">Records</a></li>
                 </li>
                 <li role="presentation" class=""><a href="#employees" aria-controls="home" role="tab"
-                                                          data-toggle="tab">Employees</a></li>
+                                                    data-toggle="tab">Employees</a></li>
                 </li>
             </ul>
             <!-- Tab panes -->
@@ -80,18 +80,29 @@ $device = $db->fetch_array($result);
                     <div>
                         <button id="btnDownloadAllRecords" type="button" class="btn btn-primary">Download All Records
                         </button>
+                        <div style="display: none;">
+                            <form id="formImportBackFile"
+                                  action="command.php?id=<?php echo $device['id']; ?>&command=importBackFile"
+                                  method="post" enctype="multipart/form-data" >
+                                <input type="file" name="file"/>
+                            </form>
+                        </div>
+                        <button id="btnImportBackFile" type="button" class="btn btn-primary">Import Backup File
+                        </button>
                     </div>
                     <div id="RecordsList">
-                        <?php require (dirname(__FILE__).'/common/recordlist.php');?>
+                        <?php require(dirname(__FILE__) . '/common/recordlist.php'); ?>
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="employees" style="padding: 10px;">
                     <div>
                         <button id="btnDownloadAllEmployees" type="button" class="btn btn-primary">Download All Employee
                         </button>
-                        <button id="btnDownloadAllTemplates" type="button" class="btn btn-primary">Download All Templates
+                        <button id="btnDownloadAllTemplates" type="button" class="btn btn-primary">Download All
+                            Templates
                         </button>
-                        <button id="btnClearAllEmployees" type="button" class="btn btn-primary">Clear All Employee & Templates
+                        <button id="btnClearAllEmployees" type="button" class="btn btn-primary">Clear All Employee &
+                            Templates
                         </button>
                         <button id="btnUploadAllEmployees" type="button" class="btn btn-primary">Upload All Employee
                         </button>
@@ -99,7 +110,7 @@ $device = $db->fetch_array($result);
                         </button>
                     </div>
                     <div id="EmployeesList">
-                        <?php require (dirname(__FILE__).'/common/employeelist.php');?>
+                        <?php require(dirname(__FILE__) . '/common/employeelist.php'); ?>
                     </div>
                 </div>
             </div>
@@ -114,12 +125,12 @@ $device = $db->fetch_array($result);
             _this.button('loading');
             var device_id = jQuery('#device_id').val();
             jQuery.post('command.php', {id: device_id, command: 'downloadAllRecords'}, function (result) {
-                if(!result.success){
+                if (!result.success) {
                     alert('Error');
                     _this.button('reset');
-                }else{
-                    app.checkCommandStatus(result.data.id).done(function(){
-                        jQuery('#RecordsList').load('common/recordlist.php', {id:device_id});
+                } else {
+                    app.checkCommandStatus(result.data.id).done(function () {
+                        jQuery('#RecordsList').load('common/recordlist.php', {id: device_id});
                         _this.button('reset');
                     });
                 }
@@ -131,12 +142,12 @@ $device = $db->fetch_array($result);
             _this.button('loading');
             var device_id = jQuery('#device_id').val();
             jQuery.post('command.php', {id: device_id, command: 'downloadAllEmployee'}, function (result) {
-                if(!result.success){
+                if (!result.success) {
                     alert('Error');
                     _this.button('reset');
-                }else{
-                    app.checkCommandStatus(result.data.id).done(function(){
-                        jQuery('#EmployeesList').load('common/employeelist.php', {id:device_id});
+                } else {
+                    app.checkCommandStatus(result.data.id).done(function () {
+                        jQuery('#EmployeesList').load('common/employeelist.php', {id: device_id});
                         _this.button('reset');
                     });
                 }
@@ -148,12 +159,12 @@ $device = $db->fetch_array($result);
             _this.button('loading');
             var device_id = jQuery('#device_id').val();
             jQuery.post('command.php', {id: device_id, command: 'downloadAllTemplate'}, function (result) {
-                if(!result.success){
+                if (!result.success) {
                     alert('Error');
                     _this.button('reset');
-                }else{
-                    app.checkCommandStatus(result.data.id).done(function(){
-                        jQuery('#EmployeesList').load('common/employeelist.php', {id:device_id});
+                } else {
+                    app.checkCommandStatus(result.data.id).done(function () {
+                        jQuery('#EmployeesList').load('common/employeelist.php', {id: device_id});
                         _this.button('reset');
                     });
                 }
@@ -165,12 +176,12 @@ $device = $db->fetch_array($result);
             _this.button('loading');
             var device_id = jQuery('#device_id').val();
             jQuery.post('command.php', {id: device_id, command: 'clearAllEmployees'}, function (result) {
-                if(!result.success){
+                if (!result.success) {
                     alert('Error');
                     _this.button('reset');
-                }else{
-                    app.checkCommandStatus(result.data.id).done(function(){
-                        jQuery('#EmployeesList').load('common/employeelist.php', {id:device_id});
+                } else {
+                    app.checkCommandStatus(result.data.id).done(function () {
+                        jQuery('#EmployeesList').load('common/employeelist.php', {id: device_id});
                         _this.button('reset');
                     });
                 }
@@ -182,12 +193,12 @@ $device = $db->fetch_array($result);
             _this.button('loading');
             var device_id = jQuery('#device_id').val();
             jQuery.post('command.php', {id: device_id, command: 'uploadAllEmployees'}, function (result) {
-                if(!result.success){
+                if (!result.success) {
                     alert('Error');
                     _this.button('reset');
-                }else{
-                    app.checkCommandStatus(result.data.id).done(function(){
-                        jQuery('#EmployeesList').load('common/employeelist.php', {id:device_id});
+                } else {
+                    app.checkCommandStatus(result.data.id).done(function () {
+                        jQuery('#EmployeesList').load('common/employeelist.php', {id: device_id});
                         _this.button('reset');
                     });
                 }
@@ -199,16 +210,25 @@ $device = $db->fetch_array($result);
             _this.button('loading');
             var device_id = jQuery('#device_id').val();
             jQuery.post('command.php', {id: device_id, command: 'uploadAllTemplates'}, function (result) {
-                if(!result.success){
+                if (!result.success) {
                     alert('Error');
                     _this.button('reset');
-                }else{
-                    app.checkCommandStatus(result.data.id).done(function(){
-                        jQuery('#EmployeesList').load('common/employeelist.php', {id:device_id});
+                } else {
+                    app.checkCommandStatus(result.data.id).done(function () {
+                        jQuery('#EmployeesList').load('common/employeelist.php', {id: device_id});
                         _this.button('reset');
                     });
                 }
             }, 'json');
+        });
+
+        jQuery('#btnImportBackFile').click(function (e) {
+            var form = jQuery('#formImportBackFile');
+            jQuery('input:file', form).trigger('click');
+        });
+        jQuery('#formImportBackFile input:file').change(function () {
+            var form = jQuery('#formImportBackFile');
+            form.submit();
         });
     });
 </script>
