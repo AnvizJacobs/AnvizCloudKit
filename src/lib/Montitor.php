@@ -109,6 +109,7 @@ class Montitor
             case CMD_GETALLEMPLOYEE:
             case CMD_GETONEEMPLOYEE:
                 $result = Protocol::EmployeeDevice($data['content']);
+            $this->log->write('debug', 'actionTransport: Command - ' . $data['command'] . ', Data - ' . json_encode($result));
                 if (!$this->callback->employee($device_id, $data['id'], $result)) {
                     return Protocol::showError($token, $device_id, CMD_GETALLEMPLOYEE);
                 }
@@ -145,6 +146,67 @@ class Montitor
         if (empty($data)) {
             $command = Protocol::showNocommand($token, $device_id);
         } else {
+            $this->log->write('debug', 'actionTransport: Response:' . json_encode($data));
+            $command = Protocol::joinCommand($token, $device_id, $data['id'], $data['command'], 0, $data['content']);
+        }
+
+        return Tools::R($command);
+    }
+
+    /**
+     * @Created by Jacobs <jacobs@anviz.com>
+     * @Name: actionReport
+     * @param string $serial_number
+     * @param string $data
+     * @Description:Transport
+     */
+    public function actionReport($serial_number = "", $data = "")
+    {
+        $device_id = $serial_number;
+
+        if (empty($device_id) || empty($data)) {
+            $this->log->write('error', 'actionTransport: The lack of necessary parameters');
+
+            return Protocol::showRegister($device_id);
+        }
+
+        $token = $this->callback->getToken($device_id);
+        $this->log->write('debug', 'actionTransport: Get Token:' . $token);
+
+        if (empty($token)) {
+            $this->log->write('error', 'actionTransport: The token has expires');
+            return Protocol::showRegister($device_id);
+        }
+        $data = Protocol::explodeCommand($token, $data);
+        if (!$data) {
+            $this->log->write('error', 'actionTransport: The token has expires');
+
+            return Protocol::showRegister($device_id);
+        }
+
+        $this->callback->updateLastlogin($device_id);
+
+        $this->log->write('debug', 'actionTransport: Command - ' . $data['command'] . ', Data - ' . json_encode($data));
+        switch ($data['command']) {
+            case CMD_GETNEWRECORD:
+                $result = Protocol::RecordDevice($data['content']);
+                if (!$this->callback->record($device_id, $data['id'], $result)) {
+                    return Protocol::showError($token, $device_id, CMD_GETALLRECORD);
+                }
+                break;
+            default:
+                if (!$this->callback->other($device_id, $data['id'])) {
+                    return Protocol::showError($token, $device_id, CMD_GETALLRECORD);
+                }
+                break;
+        }
+
+        /** Get the next command **/
+        $data = $this->callback->getNextCommand($device_id);
+        if (empty($data)) {
+            $command = Protocol::showNocommand($token, $device_id);
+        } else {
+            $this->log->write('debug', 'actionTransport: Response:' . json_encode($data));
             $command = Protocol::joinCommand($token, $device_id, $data['id'], $data['command'], 0, $data['content']);
         }
 
