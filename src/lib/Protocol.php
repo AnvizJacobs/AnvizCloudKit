@@ -610,7 +610,7 @@ class Protocol
 
     public static function showForbidden()
     {
-        return Tools::R(self::joinCommand('11111111', '0', '22222222', CMD_FORBIDDEN, 5, ''));
+        return Tools::R(self::joinCommand('11111111', '22222222', '22222222', CMD_FORBIDDEN, 5, ''));
     }
 
     public static function showNocommand($token, $device_id)

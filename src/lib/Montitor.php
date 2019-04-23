@@ -89,7 +89,7 @@ class Montitor
 
         $this->callback->updateLastlogin($device_id);
 
-        $this->log->write('debug', 'actionTransport: Command - ' . $data['command'] . ', Data - ' . json_encode($data));
+        $this->log->write('debug', 'actionTransport: Command - ' . $data['command']);
         switch ($data['command']) {
             case CMD_REGESTER:
                 return Protocol::showRegister($device_id);
@@ -165,31 +165,31 @@ class Montitor
         $device_id = $serial_number;
 
         if (empty($device_id) || empty($data)) {
-            $this->log->write('error', 'actionTransport: The lack of necessary parameters');
+            $this->log->write('error', 'actionReport: The lack of necessary parameters');
 
             return Protocol::showRegister($device_id);
         }
 
         $token = $this->callback->getToken($device_id);
-        $this->log->write('debug', 'actionTransport: Get Token:' . $token);
+        $this->log->write('debug', 'actionReport: Get Token:' . $token);
 
         if (empty($token)) {
-            $this->log->write('error', 'actionTransport: The token has expires');
+            $this->log->write('error', 'actionReport: The token has expires');
             return Protocol::showRegister($device_id);
         }
         $data = Protocol::explodeCommand($token, $data);
         if (!$data) {
-            $this->log->write('error', 'actionTransport: The token has expires');
+            $this->log->write('error', 'actionReport: The token has expires');
 
             return Protocol::showRegister($device_id);
         }
 
         $this->callback->updateLastlogin($device_id);
 
-        $this->log->write('debug', 'actionTransport: Command - ' . $data['command'] . ', Data - ' . json_encode($data));
         switch ($data['command']) {
             case CMD_GETNEWRECORD:
                 $result = Protocol::RecordDevice($data['content']);
+                $this->log->write('debug', 'actionReport: Command - ' . $data['command'] . ', Data - ' . json_encode($result));
                 if (!$this->callback->record($device_id, $data['id'], $result)) {
                     return Protocol::showError($token, $device_id, CMD_GETALLRECORD);
                 }
