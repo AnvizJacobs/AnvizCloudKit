@@ -37,13 +37,14 @@ class callback implements AnvizInterface
               model="' . $data['model'] . '",
               firmware="' . $data['firmware'] . '",
               protocol="' . $data['protocol'] . '",
-              is_login=0,
+              is_login=0
             ';
             if ($row['expirestime'] <= time()) {
                 $sql .= ', token="' . $token . '", expirestime=' . $expirestime;
             } else {
                 $token = $row['token'];
             }
+            $sql = ' WHERE serial_number="'.$data['serial_number'].'"';
             $db->query($sql);
         }
 
