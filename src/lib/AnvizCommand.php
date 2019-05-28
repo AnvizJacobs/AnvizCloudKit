@@ -12,9 +12,9 @@
  */
 class AnvizCommand
 {
-    public $device_id;      //Device ID
-    public $token;          //Token
-    public $task_id;        //Task ID no more than 8 digits
+    public $device_id; //Device ID
+    public $token; //Token
+    public $task_id; //Task ID no more than 8 digits
 
     /**
      * @author jacobs@anviz.com
@@ -24,13 +24,53 @@ class AnvizCommand
     public function getNetwork()
     {
         $content = '';
-        $id = Tools::createCommandId();
+        $id      = Tools::createCommandId();
 
         return array(
-            'id' => $id,
-            'params' => array(),
+            'id'      => $id,
+            'params'  => array(),
             'command' => CMD_GETNETWORK,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
+        );
+    }
+
+    /**
+     * @author jacobs@anviz.com
+     * @return bool|string
+     * @description The command of get Record & User & FP number
+     */
+    public function getRecordUserFPCount()
+    {
+        $content = '';
+        $id      = Tools::createCommandId();
+
+        return array(
+            'id'      => $id,
+            'params'  => array(),
+            'command' => CMD_GETRECORDUSERFPCOUNT,
+            'content' => base64_encode($content),
+        );
+    }
+
+    public function setSuperAdminPassword($password = '')
+    {
+        if (empty($password)) {
+            return false;
+        }
+
+        $password = intval($password);
+
+        $content = Protocol::setSuperAdminPassword($password);
+        if (empty($content)) {
+            return false;
+        }
+
+        $id = Tools::createCommandId();
+        return array(
+            'id'      => $id,
+            'params'  => $data,
+            'command' => CMD_SETADMINPASSWORD,
+            'content' => base64_encode($content),
         );
     }
 
@@ -45,24 +85,25 @@ class AnvizCommand
     public function setDatetime($timestamp = 0)
     {
         $timestamp = empty($timestamp) ? time() : $timestamp;
-        $data = array(
-            'year' => date('Y', $timestamp),
-            'month' => date('m', $timestamp),
-            'day' => date('d', $timestamp),
-            'hour' => date('H', $timestamp),
+        $data      = array(
+            'year'   => date('Y', $timestamp),
+            'month'  => date('m', $timestamp),
+            'day'    => date('d', $timestamp),
+            'hour'   => date('H', $timestamp),
             'minute' => date('i', $timestamp),
-            'second' => date('s', $timestamp)
+            'second' => date('s', $timestamp),
         );
         $content = Protocol::setDeviceDateTime($data);
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         $id = Tools::createCommandId();
         return array(
-            'id' => $id,
-            'params' => $data,
+            'id'      => $id,
+            'params'  => $data,
             'command' => CMD_SETDATETIME,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 
@@ -80,20 +121,21 @@ class AnvizCommand
     {
         $start = empty($start) ? 0 : $start;
         $limit = empty($limit) ? 100 : $limit;
-        $data = array(
+        $data  = array(
             'start' => $start,
-            'limit' => $limit
+            'limit' => $limit,
         );
         $content = Protocol::getAllEmployee($data);
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         $id = Tools::createCommandId();
         return array(
-            'id' => $id,
-            'params' => $data,
+            'id'      => $id,
+            'params'  => $data,
             'command' => CMD_GETALLEMPLOYEE,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 
@@ -107,21 +149,24 @@ class AnvizCommand
      */
     public function getEmployee($idd = 0)
     {
-        if (empty($idd))
+        if (empty($idd)) {
             return false;
-        $content = Protocol::getEmployee($idd);
-        if (empty($content))
-            return false;
+        }
 
-        $id = Tools::createCommandId();
+        $content = Protocol::getEmployee($idd);
+        if (empty($content)) {
+            return false;
+        }
+
+        $id   = Tools::createCommandId();
         $data = array(
-            'idd' => $idd
+            'idd' => $idd,
         );
         return array(
-            'id' => $id,
-            'params' => $data,
+            'id'      => $id,
+            'params'  => $data,
             'command' => CMD_GETONEEMPLOYEE,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 
@@ -153,24 +198,29 @@ class AnvizCommand
      */
     public function setEmployees($employees)
     {
-        if (empty($employees))
+        if (empty($employees)) {
             return false;
+        }
+
         $content = '';
         foreach ($employees as $employee) {
             $_content = Protocol::setEmployee($employee);
-            if (empty($_content))
+            if (empty($_content)) {
                 return false;
+            }
+
             $content .= $_content;
         }
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         $id = Tools::createCommandId();
         return array(
-            'id' => $id,
-            'params' => array(),
+            'id'      => $id,
+            'params'  => array(),
             'command' => CMD_PUTALLEMPLOYEE,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 
@@ -192,23 +242,25 @@ class AnvizCommand
      */
     public function setEmployee($employee)
     {
-        if (empty($employee))
+        if (empty($employee)) {
             return false;
+        }
 
         $content = '';
         foreach ($employee as $row) {
             $content .= Protocol::setEmployee($row);
         }
 
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         $id = Tools::createCommandId();
         return array(
-            'id' => $id,
-            'params' => array(),
+            'id'      => $id,
+            'params'  => array(),
             'command' => CMD_PUTONEEMPLOYEE,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 
@@ -224,10 +276,10 @@ class AnvizCommand
 
         $id = Tools::createCommandId();
         return array(
-            'id' => $id,
-            'params' => array(),
+            'id'      => $id,
+            'params'  => array(),
             'command' => CMD_DELETEALLEMPLOYEE,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 
@@ -242,26 +294,31 @@ class AnvizCommand
      */
     public function deleteEmployee($idds)
     {
-        if (empty($idds))
+        if (empty($idds)) {
             return false;
+        }
+
         $content = '';
-        $data = array();
+        $data    = array();
         foreach ($idds as $idd) {
             $_content = Protocol::delEmployee($idd);
-            if (empty($_content))
+            if (empty($_content)) {
                 return false;
+            }
+
             $content .= $_content;
             $data['idd'][] = $idd;
         }
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         $id = Tools::createCommandId();
         return array(
-            'id' => $id,
-            'params' => $data,
+            'id'      => $id,
+            'params'  => $data,
             'command' => CMD_DELETEONEEMPLOYEE,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 
@@ -279,20 +336,21 @@ class AnvizCommand
     {
         $start = empty($start) ? 0 : $start;
         $limit = empty($limit) ? 100 : $limit;
-        $data = array(
+        $data  = array(
             'start' => $start,
-            'limit' => $limit
+            'limit' => $limit,
         );
         $content = Protocol::getAllFinger($data);
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         $id = Tools::createCommandId();
         return array(
-            'id' => $id,
-            'params' => $data,
+            'id'      => $id,
+            'params'  => $data,
             'command' => CMD_GETALLFINGER,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 
@@ -306,19 +364,22 @@ class AnvizCommand
      */
     public function getFinger($idd)
     {
-        if (empty($idd))
+        if (empty($idd)) {
             return false;
+        }
+
         $content = Protocol::getFinger($idd);
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         $data['idd'] = $idd;
-        $id = Tools::createCommandId();
+        $id          = Tools::createCommandId();
         return array(
-            'id' => $id,
-            'params' => $data,
+            'id'      => $id,
+            'params'  => $data,
             'command' => CMD_GETONEFINGER,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 
@@ -345,24 +406,29 @@ class AnvizCommand
      */
     public function setFingers($fingers)
     {
-        if (empty($fingers))
+        if (empty($fingers)) {
             return false;
+        }
+
         $content = '';
         foreach ($fingers as $finger) {
             $_content = Protocol::setFinger($finger);
-            if (empty($_content))
+            if (empty($_content)) {
                 continue;
+            }
+
             $content .= $_content;
         }
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         $id = Tools::createCommandId();
         return array(
-            'id' => $id,
-            'params' => array(),
+            'id'      => $id,
+            'params'  => array(),
             'command' => CMD_PUTALLFINGER,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 
@@ -381,18 +447,21 @@ class AnvizCommand
      */
     public function setFinger($finger)
     {
-        if (empty($finger))
+        if (empty($finger)) {
             return false;
+        }
+
         $content = Protocol::setFinger($finger);
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         $id = Tools::createCommandId();
         return array(
-            'id' => $id,
-            'params' => array(),
+            'id'      => $id,
+            'params'  => array(),
             'command' => CMD_PUTONEFINGER,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 
@@ -410,25 +479,48 @@ class AnvizCommand
      */
     public function setEnrollFinger($idd, $sign = 0, $signed = 0)
     {
-        if (empty($idd))
+        if (empty($idd)) {
             return false;
-        $sign = empty($sign) ? 0 : $sign;
+        }
+
+        $sign   = empty($sign) ? 0 : $sign;
         $signed = empty($signed) ? 0 : $signed;
-        $data = array(
-            'idd' => $idd,
-            'sign' => $sign,
-            'signed' => $signed
+        $data   = array(
+            'idd'    => $idd,
+            'sign'   => $sign,
+            'signed' => $signed,
         );
         $content = Protocol::setEnrollFinger($data);
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         $id = Tools::createCommandId();
         return array(
-            'id' => $id,
-            'params' => $data,
+            'id'      => $id,
+            'params'  => $data,
             'command' => CMD_ENROLLFINGER,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
+        );
+    }
+
+    public function setEnrollCard($idd = '')
+    {
+        if (empty($idd)) {
+            return false;
+        }
+
+        $content = Protocol::setEnrollCard($idd);
+        if (empty($content)) {
+            return false;
+        }
+
+        $id = Tools::createCommandId();
+        return array(
+            'id'      => $id,
+            'params'  => $data,
+            'command' => CMD_ENROLLCARD,
+            'content' => base64_encode($content),
         );
     }
 
@@ -443,10 +535,10 @@ class AnvizCommand
 
         $id = Tools::createCommandId();
         return array(
-            'id' => $id,
-            'params' => array(),
+            'id'      => $id,
+            'params'  => array(),
             'command' => CMD_DELETEALLFINGER,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 
@@ -462,23 +554,26 @@ class AnvizCommand
      */
     public function deleteFinger($idd, $sign = 0)
     {
-        if (empty($idd))
+        if (empty($idd)) {
             return false;
+        }
+
         $sign = empty($sign) ? 0 : $sign;
         $data = array(
-            'idd' => $idd,
-            'sign' => $sign
+            'idd'  => $idd,
+            'sign' => $sign,
         );
         $content = Protocol::deleteFinger($data);
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         $id = Tools::createCommandId();
         return array(
-            'id' => $id,
-            'params' => $data,
+            'id'      => $id,
+            'params'  => $data,
             'command' => CMD_DELETEONEFINGER,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 
@@ -496,18 +591,18 @@ class AnvizCommand
     {
         $start = empty($start) ? 0 : $start;
         $limit = empty($limit) ? 100 : $limit;
-        $data = array(
+        $data  = array(
             'start' => $start,
-            'limit' => $limit
+            'limit' => $limit,
         );
         $content = Protocol::getAllRecord($data);
-        $id = Tools::createCommandId();
+        $id      = Tools::createCommandId();
 
         return array(
-            'id' => $id,
-            'params' => $data,
+            'id'      => $id,
+            'params'  => $data,
             'command' => CMD_GETALLRECORD,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 
@@ -525,20 +620,21 @@ class AnvizCommand
     {
         $start = empty($start) ? 0 : $start;
         $limit = empty($limit) ? 100 : $limit;
-        $data = array(
+        $data  = array(
             'start' => $start,
-            'limit' => $limit
+            'limit' => $limit,
         );
         $content = Protocol::getAllRecord($data);
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         $id = Tools::createCommandId();
         return array(
-            'id' => $id,
-            'params' => $data,
+            'id'      => $id,
+            'params'  => $data,
             'command' => CMD_GETNEWRECORD,
-            'content' => base64_encode($content)
+            'content' => base64_encode($content),
         );
     }
 }

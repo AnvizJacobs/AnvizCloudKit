@@ -57,6 +57,15 @@ interface AnvizInterface
 
     /**
      * @return boolean
+     * @description Login authentication
+     * @param
+     *      $id string Device ID
+     *      $command_id command_id
+     */
+    public function total($id, $command_id, $data);
+
+    /**
+     * @return boolean
      * @description Get records. By getRecords/getNewRecords will call back this method
      * @param
      *      id: string Device ID
@@ -104,6 +113,12 @@ interface AnvizInterface
      *              )
      */
     public function employee($id, $command_id, $data);
+
+    public function finger($id, $command_id, $data);
+
+    public function enrollFinger($id, $command_id, $data);
+
+    public function enrollCard($id, $command_id, $data);
 
     /**
      * @return boolean

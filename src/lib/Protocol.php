@@ -12,32 +12,35 @@
  * The communication instructions of device
  */
 define('KEY', 'AnvizDevelopOpenKey');
-define('CMD_LOGIN', 9001);              //Login
-define('CMD_NOCOMMAND', 9002);          //Heartbeat
-define('CMD_FORBIDDEN', 9003);          //Disable connection
-define('CMD_REGESTER', 9004);           //Register
-define('CMD_ERROR', 9005);              //The command error
+define('CMD_LOGIN', 9001); //Login
+define('CMD_NOCOMMAND', 9002); //Heartbeat
+define('CMD_FORBIDDEN', 9003); //Disable connection
+define('CMD_REGESTER', 9004); //Register
+define('CMD_ERROR', 9005); //The command error
+define('CMD_GETRECORDUSERFPCOUNT', 9007); //Get User & Record & FP number in device
 
-define('CMD_GETNETWORK', 1003);         //Get network parameters
-define('CMD_SETDATETIME', 1004);         //Config network parameters
+define('CMD_GETNETWORK', 1003); //Get network parameters
+define('CMD_SETDATETIME', 1004); //Config network parameters
+define('CMD_SETADMINPASSWORD', 9009); //Modify the super admin password in device
 
-define('CMD_GETALLEMPLOYEE', 2001);     //Download all employees from device(Does not include fingerprint template and attendance records)
-define('CMD_PUTALLEMPLOYEE', 2101);     //Upload employee data in bulk
-define('CMD_GETONEEMPLOYEE', 2002);     //Download the specified employee information
-define('CMD_PUTONEEMPLOYEE', 2102);     //Upload the specified employee information
-define('CMD_DELETEALLEMPLOYEE', 2021);  //Clear all employees form deivce(And clear all fingerprint template, but not clear attendance records)
-define('CMD_DELETEONEEMPLOYEE', 2022);  //Delete the specified employee from device
+define('CMD_GETALLEMPLOYEE', 2001); //Download all employees from device(Does not include fingerprint template and attendance records)
+define('CMD_PUTALLEMPLOYEE', 2101); //Upload employee data in bulk
+define('CMD_GETONEEMPLOYEE', 2002); //Download the specified employee information
+define('CMD_PUTONEEMPLOYEE', 2102); //Upload the specified employee information
+define('CMD_DELETEALLEMPLOYEE', 2021); //Clear all employees form deivce(And clear all fingerprint template, but not clear attendance records)
+define('CMD_DELETEONEEMPLOYEE', 2022); //Delete the specified employee from device
 
-define('CMD_GETALLFINGER', 2031);       //Download all fingerprint templates from device
-define('CMD_PUTALLFINGER', 2131);       //Upload the fingerprint templates in bulk
-define('CMD_GETONEFINGER', 2032);       //download templates of the specified employee
-define('CMD_PUTONEFINGER', 2132);       //Upload template of the specified employee
-define('CMD_DELETEALLFINGER', 2041);    //Clear all fingerprint templates from device(But not clear employee and attendance records)
-define('CMD_DELETEONEFINGER', 2042);    //Delete templates of the specified from device
-define('CMD_ENROLLFINGER', 2033);       //Remote registration fingerprint
+define('CMD_GETALLFINGER', 2031); //Download all fingerprint templates from device
+define('CMD_PUTALLFINGER', 2131); //Upload the fingerprint templates in bulk
+define('CMD_GETONEFINGER', 2032); //download templates of the specified employee
+define('CMD_PUTONEFINGER', 2132); //Upload template of the specified employee
+define('CMD_DELETEALLFINGER', 2041); //Clear all fingerprint templates from device(But not clear employee and attendance records)
+define('CMD_DELETEONEFINGER', 2042); //Delete templates of the specified from device
+define('CMD_ENROLLFINGER', 2033); //Remote registration fingerprint
+define('CMD_ENROLLCARD', 9008); //Remote registration card
 
-define('CMD_GETALLRECORD', 3001);       //Download all attendance records form device
-define('CMD_GETNEWRECORD', 3002);       //Download new attendance records from device
+define('CMD_GETALLRECORD', 3001); //Download all attendance records form device
+define('CMD_GETNEWRECORD', 3002); //Download new attendance records from device
 
 class Protocol
 {
@@ -53,19 +56,20 @@ class Protocol
      */
     public static function explodeCommand($token, $data)
     {
-        if (empty($token) || empty($data))
+        if (empty($token) || empty($data)) {
             return false;
+        }
 
         $sha1 = substr(sha1(KEY . $token), 16, 8);
 
         $data = base64_decode($data);
 
-        $data = Tools::decrypt3DES($data, $sha1);
+        $data                = Tools::decrypt3DES($data, $sha1);
         $result["device_id"] = trim(substr($data, 0, 32));
-        $result["id"] = trim(substr($data, 32, 8));
-        $result["command"] = trim(substr($data, 40, 4));
-        $result["length"] = trim(substr($data, 48, 8));
-        $result["content"] = @str_pad(substr($data, 56), $result['length'], ' ', STR_PAD_RIGHT);
+        $result["id"]        = trim(substr($data, 32, 8));
+        $result["command"]   = trim(substr($data, 40, 4));
+        $result["length"]    = trim(substr($data, 48, 8));
+        $result["content"]   = @str_pad(substr($data, 56), $result['length'], ' ', STR_PAD_RIGHT);
 
         return $result;
     }
@@ -81,8 +85,9 @@ class Protocol
      */
     public static function RegisterDevice($data = '')
     {
-        if (empty($data))
+        if (empty($data)) {
             return false;
+        }
 
         $data = base64_decode($data);
 
@@ -110,12 +115,13 @@ class Protocol
      */
     public static function LoginDevice($content = '')
     {
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         $result = array();
 
-        $result['username'] = trim(substr($content, 0, 20));
+        $result['username']  = trim(substr($content, 0, 20));
         $result['dpassword'] = trim(substr($content, 20, 20));
 
         return $result;
@@ -132,25 +138,40 @@ class Protocol
      */
     public static function NetworkDevice($content = '')
     {
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
-        $result = array();
-        $result['internet'] = ord($content[0]);
+        $result              = array();
+        $result['internet']  = ord($content[0]);
         $result['ipaddress'] = ord($content[1]) . "." . ord($content[2]) . "." . ord($content[3]) . "." . ord($content[4]);
-        $result['netmask'] = ord($content[5]) . "." . ord($content[6]) . "." . ord($content[7]) . "." . ord($content[8]);
-        $result['mac'] = strtoupper(str_pad(sprintf("%x", ord($content[9])), 2, "0", STR_PAD_LEFT)) . '-'
-            . strtoupper(str_pad(sprintf("%x", ord($content[10])), 2, "0", STR_PAD_LEFT)) . '-'
-            . strtoupper(str_pad(sprintf("%x", ord($content[11])), 2, "0", STR_PAD_LEFT)) . '-'
-            . strtoupper(str_pad(sprintf("%x", ord($content[12])), 2, "0", STR_PAD_LEFT)) . '-'
-            . strtoupper(str_pad(sprintf("%x", ord($content[13])), 2, "0", STR_PAD_LEFT)) . '-'
-            . strtoupper(str_pad(sprintf("%x", ord($content[14])), 2, "0", STR_PAD_LEFT));
+        $result['netmask']   = ord($content[5]) . "." . ord($content[6]) . "." . ord($content[7]) . "." . ord($content[8]);
+        $result['mac']       = strtoupper(str_pad(sprintf("%x", ord($content[9])), 2, "0", STR_PAD_LEFT)) . '-'
+        . strtoupper(str_pad(sprintf("%x", ord($content[10])), 2, "0", STR_PAD_LEFT)) . '-'
+        . strtoupper(str_pad(sprintf("%x", ord($content[11])), 2, "0", STR_PAD_LEFT)) . '-'
+        . strtoupper(str_pad(sprintf("%x", ord($content[12])), 2, "0", STR_PAD_LEFT)) . '-'
+        . strtoupper(str_pad(sprintf("%x", ord($content[13])), 2, "0", STR_PAD_LEFT)) . '-'
+        . strtoupper(str_pad(sprintf("%x", ord($content[14])), 2, "0", STR_PAD_LEFT));
         $result['gateway'] = ord($content[15]) . "." . ord($content[16]) . "." . ord($content[17]) . "." . ord($content[18]);
         /*$result['serverip'] = ord($content[19]) . "." . ord($content[20]) . "." . ord($content[21]) . "." . ord($content[22]);
         $result['remote'] = ord($content[23]);
         $result['port'] = (ord($content[24]) << 8) + ord($content[25]);
         $result['comm_method'] = ord($content[26]);*/
         $result['dhcp'] = ord($content[27]);
+
+        return $result;
+    }
+
+    public static function RecordUserFPCountDevice($content = '')
+    {
+        if (empty($content)) {
+            return false;
+        }
+
+        $result           = array();
+        $result['record'] = substr($content, 0, 8);
+        $result['user']   = substr($content, 8, 8);
+        $result['fp']     = substr($content, 16, 8);
 
         return $result;
     }
@@ -166,8 +187,9 @@ class Protocol
      */
     public static function EmployeeDevice($content = '')
     {
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         /**
          * The length of each employee information is 40
@@ -246,8 +268,9 @@ class Protocol
      */
     public static function FingerDevice($content = '')
     {
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         /**
          * The length of each finger information is 344
@@ -285,14 +308,15 @@ class Protocol
 
     public static function EnrollFinger($content = '')
     {
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         if (strlen($content) % 344 != 0) {
             return false;
         }
         $result = array();
-        $row = substr($content, 0, 344);
+        $row    = substr($content, 0, 344);
 
         /** ID On Device */
         $result['idd'] = (ord($row[0]) << 32) + (ord($row[1]) << 24) + (ord($row[2]) << 16) + (ord($row[3]) << 8) + ord($row[4]);
@@ -309,6 +333,25 @@ class Protocol
         return $result;
     }
 
+    public static function EnrollCardDevice($content = '')
+    {
+        if (empty($content)) {
+            return false;
+        }
+
+        $result = array();
+        /** ID On Device */
+        $result['idd'] = (ord($content[0]) << 32) + (ord($content[1]) << 24) + (ord($content[2]) << 16) + (ord($content[3]) << 8) + ord($content[4]);
+
+        if (ord($content[5]) == 0xFF and ord($content[6]) == 0xFF and ord($content[7]) == 0xFF and ord($content[8]) == 0xFF) {
+            $result['cardid'] = '';
+        } else {
+            $result['cardid'] = (ord($content[5]) << 24) + (ord($content[6]) << 16) + (ord($content[7]) << 8) + ord($content[8]);
+        }
+
+        return $result;
+    }
+
     /**
      * @Created    by Jacobs <jacobs@anviz.com>
      * @Name       : RecordDevice
@@ -320,8 +363,9 @@ class Protocol
      */
     public static function RecordDevice($content = '')
     {
-        if (empty($content))
+        if (empty($content)) {
             return false;
+        }
 
         /**
          * The length of each record is 16
@@ -355,9 +399,11 @@ class Protocol
         return $result;
     }
 
-    public static function RecordImport($content = ''){
-        if (empty($content))
+    public static function RecordImport($content = '')
+    {
+        if (empty($content)) {
             return false;
+        }
 
         /**
          * The length of each record is 16
@@ -369,7 +415,7 @@ class Protocol
         $result = array();
 
         $count = (ord($content[0]) << 16) + (ord($content[1]) << 8) + ord($content[2]);
-        for($i = 0; $i < $count; $i++){
+        for ($i = 0; $i < $count; $i++) {
             $row = substr($content, $i * 14 + 3, 14);
 
             $record = array();
@@ -388,18 +434,20 @@ class Protocol
 
     public static function setDeviceDateTime($data = array())
     {
-        if (empty($data))
+        if (empty($data)) {
             return false;
+        }
 
-        $year = empty($data['year']) ? date('Y') : $data['year'];
-        $month = empty($data['month']) ? date('m') : $data['month'];
-        $day = empty($data['day']) ? date('d') : $data['day'];
-        $hour = empty($data['hour']) ? 0 : $data['hour'];
+        $year   = empty($data['year']) ? date('Y') : $data['year'];
+        $month  = empty($data['month']) ? date('m') : $data['month'];
+        $day    = empty($data['day']) ? date('d') : $data['day'];
+        $hour   = empty($data['hour']) ? 0 : $data['hour'];
         $minute = empty($data['minute']) ? 0 : $data['minute'];
         $second = empty($data['second']) ? 0 : $data['second'];
 
-        if ($year >= 2000)
+        if ($year >= 2000) {
             $year = $year - 2000;
+        }
 
         $pack = '';
 
@@ -435,21 +483,23 @@ class Protocol
 
     public static function setEmployee($employee)
     {
-        if (empty($employee))
+        if (empty($employee)) {
             return false;
+        }
 
-        if (!isset($employee['idd']))
+        if (!isset($employee['idd'])) {
             return false;
+        }
 
-        $idd = $employee['idd'];
-        $passd = isset($employee['passd']) ? $employee['passd'] : '';
-        $cardid = isset($employee['cardid']) ? $employee['cardid'] : '';
-        $name = isset($employee['name']) ? $employee['name'] : $idd;
-        $deptid = isset($employee['deptid']) ? $employee['deptid'] : 0;
-        $is_admin = isset($employee['is_admin']) ? $employee['is_admin'] : 64;
-        $group_id = isset($employee['group_id']) ? $employee['group_id'] : 0;
+        $idd           = $employee['idd'];
+        $passd         = isset($employee['passd']) ? $employee['passd'] : '';
+        $cardid        = isset($employee['cardid']) ? $employee['cardid'] : '';
+        $name          = isset($employee['name']) ? $employee['name'] : $idd;
+        $deptid        = isset($employee['deptid']) ? $employee['deptid'] : 0;
+        $is_admin      = isset($employee['is_admin']) ? $employee['is_admin'] : 64;
+        $group_id      = isset($employee['group_id']) ? $employee['group_id'] : 0;
         $identity_type = isset($employee['identity_type']) ? $employee['identity_type'] : 6;
-        $fingersign = 0;
+        $fingersign    = 0;
 
         $pack = '';
 
@@ -503,8 +553,9 @@ class Protocol
 
     public static function delEmployee($idd)
     {
-        if (empty($idd))
+        if (empty($idd)) {
             return false;
+        }
 
         $pack = '';
 
@@ -528,8 +579,9 @@ class Protocol
 
     public static function getFinger($idd)
     {
-        if (empty($idd))
+        if (empty($idd)) {
             return false;
+        }
 
         $pack = pack("C", intval($idd / 0x00FFFFFFFF)) . pack("N", $idd & 0x00FFFFFFFF);
 
@@ -539,12 +591,13 @@ class Protocol
 
     public static function setFinger($finger)
     {
-        if (empty($finger) || empty($finger['idd']) || empty($finger['template']))
+        if (empty($finger) || empty($finger['idd']) || empty($finger['template'])) {
             return false;
+        }
 
-        $idd = $finger['idd'];
+        $idd  = $finger['idd'];
         $sign = empty($finger['sign']) ? 0 : $finger['sign'];
-        $fp = $finger['template'];
+        $fp   = $finger['template'];
 
         $pack = '';
         $pack .= pack("C", intval($idd / 0x00FFFFFFFF)) . pack("N", $idd & 0x00FFFFFFFF);
@@ -556,11 +609,12 @@ class Protocol
 
     public static function setEnrollFinger($finger)
     {
-        if (empty($finger) || empty($finger['idd']))
+        if (empty($finger) || empty($finger['idd'])) {
             return false;
+        }
 
-        $idd = $finger['idd'];
-        $sign = empty($finger['sign']) ? 0 : $finger['sign'];
+        $idd    = $finger['idd'];
+        $sign   = empty($finger['sign']) ? 0 : $finger['sign'];
         $signed = empty($finger['signed']) ? 0 : $finger['signed'];
 
         $pack = '';
@@ -571,12 +625,26 @@ class Protocol
         return $pack;
     }
 
+
+    public static function setEnrollCard($idd)
+    {
+        if (empty($idd)) {
+            return false;
+        }
+
+        $pack = '';
+        $pack .= str_pad($idd, 8, '0', STR_PAD_LEFT);
+
+        return $pack;
+    }
+
     public static function deleteFinger($finger)
     {
-        if (empty($finger) || empty($finger['idd']))
+        if (empty($finger) || empty($finger['idd'])) {
             return false;
+        }
 
-        $idd = $finger['idd'];
+        $idd  = $finger['idd'];
         $sign = empty($finger['sign']) ? 0 : $finger['sign'];
 
         $pack = '';
@@ -594,6 +662,20 @@ class Protocol
         $pack = '';
         $pack .= str_pad($start, 8, '0', STR_PAD_LEFT);
         $pack .= str_pad($limit, 8, '0', STR_PAD_LEFT);
+
+        return $pack;
+    }
+
+    public static function setSuperAdminPassword($password)
+    {
+        if (empty($password)) {
+            return false;
+        }
+        $password = substr($password, 0, 6);
+        $password = str_pad($password, 6, 0, STR_PAD_LEFT);
+
+        $pack = '';
+        $pack .= str_pad($password, 8, 0, STR_PAD_RIGHT);
 
         return $pack;
     }

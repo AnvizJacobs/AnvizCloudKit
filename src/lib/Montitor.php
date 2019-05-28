@@ -14,9 +14,11 @@ class Montitor
 
     public function __construct($callback, $config = array())
     {
+        global $log;
+
         $this->callback = $callback;
 
-        $this->log = new Logs($config['logs']);
+        $this->log = $log;
     }
 
     /**
@@ -38,6 +40,7 @@ class Montitor
             return false;
         }
 
+        $this->log->write('info', 'actionRegister: Device Info:' . json_encode($result));
         $device = $this->callback->register($result);
 
         if (empty($device['id']) || empty($device['token'])) {
@@ -46,9 +49,9 @@ class Montitor
         }
 
         $token = $device['token'];
-        $id = $device['id'];
+        $id    = $device['id'];
         $this->log->write('info', 'actionRegister: Register Success!');
-        $this->log->write('info', 'actionRegister: Device Info:'.json_encode($device));
+        $this->log->write('info', 'actionRegister: Device Info:' . json_encode($device));
 
         /** Return to let device to login system */
         $command = Protocol::joinCommand($token, $id, '11111111', CMD_LOGIN, 0, $id);
@@ -66,6 +69,8 @@ class Montitor
     public function actionTransport($serial_number = "", $data = "")
     {
         $device_id = $serial_number;
+        $this->log->write('debug', 'actionTransport: :' . $device_id);
+        $this->log->write('debug', 'actionTransport: DATA:' . $data);
 
         if (empty($device_id) || empty($data)) {
             $this->log->write('error', 'actionTransport: The lack of necessary parameters');
@@ -89,7 +94,7 @@ class Montitor
 
         $this->callback->updateLastlogin($device_id);
 
-        $this->log->write('debug', 'actionTransport: Command - ' . $data['command']);
+        $this->log->write('debug', 'explodeCommand: Data-'.json_encode($data));
         switch ($data['command']) {
             case CMD_REGESTER:
                 return Protocol::showRegister($device_id);
@@ -102,14 +107,22 @@ class Montitor
                 break;
             case CMD_GETNETWORK:
                 $result = Protocol::NetworkDevice($data['content']);
+                $this->log->write('debug', 'actionTransport: ' . CMD_GETNETWORK . ' - ' . json_encode($result));
                 if (!$this->callback->network($device_id, $data['id'], $result)) {
+                    return Protocol::showError($token, $device_id, CMD_GETNETWORK);
+                }
+                break;
+            case CMD_GETRECORDUSERFPCOUNT:
+                $result = Protocol::RecordUserFPCountDevice($data['content']);
+                $this->log->write('debug', 'actionTransport: ' . CMD_GETRECORDUSERFPCOUNT . ' - ' . json_encode($result));
+                if (!$this->callback->total($device_id, $data['id'], $result)) {
                     return Protocol::showError($token, $device_id, CMD_GETNETWORK);
                 }
                 break;
             case CMD_GETALLEMPLOYEE:
             case CMD_GETONEEMPLOYEE:
                 $result = Protocol::EmployeeDevice($data['content']);
-            $this->log->write('debug', 'actionTransport: Command - ' . $data['command'] . ', Data - ' . json_encode($result));
+                $this->log->write('debug', 'actionTransport: ' . CMD_GETONEEMPLOYEE . ' - ' . json_encode($result));
                 if (!$this->callback->employee($device_id, $data['id'], $result)) {
                     return Protocol::showError($token, $device_id, CMD_GETALLEMPLOYEE);
                 }
@@ -117,19 +130,32 @@ class Montitor
             case CMD_GETALLFINGER:
             case CMD_GETONEFINGER:
                 $result = Protocol::FingerDevice($data['content']);
+                $this->log->write('debug', 'actionTransport: ' . CMD_GETALLFINGER . ' - ' . json_encode($result));
                 if (!$this->callback->finger($device_id, $data['id'], $result)) {
                     return Protocol::showError($token, $device_id, CMD_GETALLFINGER);
                 }
                 break;
             case CMD_ENROLLFINGER:
+                $fp = fopen(dirname(__FILE__).'/bbb.txt', 'w+');
+                fwrite($fp, $data['content']);
+                fclose($fp);
                 $result = Protocol::EnrollFinger($data['content']);
+                $this->log->write('debug', 'actionTransport: ' . CMD_ENROLLFINGER . ' - ' . $result['idd'].' - '.$result['temp_id']);
                 if (!$this->callback->enrollFinger($device_id, $data['id'], $result)) {
+                    return Protocol::showError($token, $device_id, CMD_ENROLLFINGER);
+                }
+                break;
+            case CMD_ENROLLCARD:
+                $result = Protocol::EnrollCardDevice($data['content']);
+                $this->log->write('debug', 'actionTransport: ' . CMD_ENROLLCARD . ' - ' . json_encode($result));
+                if (!$this->callback->enrollCard($device_id, $data['id'], $result)) {
                     return Protocol::showError($token, $device_id, CMD_ENROLLFINGER);
                 }
                 break;
             case CMD_GETALLRECORD:
             case CMD_GETNEWRECORD:
                 $result = Protocol::RecordDevice($data['content']);
+                $this->log->write('debug', 'actionTransport: ' . CMD_GETALLRECORD . ' - ' . json_encode($result));
                 if (!$this->callback->record($device_id, $data['id'], $result)) {
                     return Protocol::showError($token, $device_id, CMD_GETALLRECORD);
                 }
@@ -146,7 +172,7 @@ class Montitor
         if (empty($data)) {
             $command = Protocol::showNocommand($token, $device_id);
         } else {
-            $this->log->write('debug', 'actionTransport: Response:' . json_encode($data));
+            $this->log->write('debug', 'Next Command: Data:' . json_encode($data));
             $command = Protocol::joinCommand($token, $device_id, $data['id'], $data['command'], 0, $data['content']);
         }
 

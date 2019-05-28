@@ -39,17 +39,31 @@ if (empty($id)) {
                 <td><?php echo $row['idd'];?></td>
                 <td><?php echo $row['name'];?></td>
                 <td><?php echo $row['passd'];?></td>
-                <td><?php echo $row['cardid'];?></td>
+                <td><font><?php echo $row['cardid'];?></font>&nbsp;<button type="button" class="btnEnrollCard btn btn-primary btn-xs" data-idd="<?php echo $row['idd'];?>">Enroll Card</button></td>
                 <td><?php echo $row['group_id'];?></td>
-                <td><?php echo $row['fingersign'];?></td>
+                <td>
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-primary dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Enroll Finger <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu btnEnrollFinger">
+                        <?php for($i=0; $i<10; $i++):?>
+                            <li><a href="#" data-idd="<?php echo $row['idd'];?>" data-sign='<?php echo $i;?>'>
+                            <?php echo $i<5?'R':'L';?>&nbsp;
+                            <?php echo intval($i%5)+1;?>&nbsp;
+                            <?php if(pow(2, $i) & $row['fingersign']):?>Registered<?php endif;?>
+                            </a></li>
+                        <?php endfor;?>
+                      </ul>
+                    </div>
+                </td>
                 <td><?php echo $row['is_admin'];?></td>
             </tr>
             <?php
             $rowNumber++;
         endwhile;
     else:
-
-        ?>
+    ?>
         <tr>
             <td colspan="6">There has no record.</td>
         </tr>
