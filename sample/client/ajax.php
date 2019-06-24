@@ -18,7 +18,14 @@ if ($method == 'command_status') {
         if ($db->num_rows($result) <= 0) {
             echo json_encode(array('success' => true));
         } else {
-            echo json_encode(array('success' => false));
+            $row = $db->fetch_array($result);
+            if ($row['status'] < 0) {
+                echo json_encode(array('success' => true, 'code' => '10001'));
+            } elseif($row['status'] > 0){
+                echo json_encode(array('success' => true));
+            }else {
+                echo json_encode(array('success' => false));
+            }
         }
     }
 } elseif ($method == 'get_record_user_fp_count') {
@@ -33,7 +40,7 @@ if ($method == 'command_status') {
             'record'   => $row['record'],
             'lasttime' => date('m/d/Y H:i:s', $row['lasttime']),
         ));
-    }else{
+    } else {
         echo json_encode(array(
             'user'     => '0',
             'fp'       => '0',
@@ -41,22 +48,22 @@ if ($method == 'command_status') {
             'lasttime' => '0',
         ));
     }
-} elseif ($method == 'get_employee'){
-    $idd = $_REQUEST['idd'];
-    $sql = 'SELECT * FROM employee WHERE idd="'.$idd.'"';
+} elseif ($method == 'get_employee') {
+    $idd    = $_REQUEST['idd'];
+    $sql    = 'SELECT * FROM employee WHERE idd="' . $idd . '"';
     $result = $db->query($sql);
     if ($db->num_rows($result) > 0) {
         $row = $db->fetch_array($result);
         echo json_encode(array(
-            'cardid'     => $row['cardid']
+            'cardid' => $row['cardid'],
         ));
-    }else{
+    } else {
         echo json_encode(array(
-            'cardid' => ''
+            'cardid' => '',
         ));
     }
-}else {
-    $sql = 'UPDATE device SET is_login=0 WHERE lasttime<='.(time()-30);
+} else {
+    $sql = 'UPDATE device SET is_login=0 WHERE lasttime<=' . (time() - 30);
     $db->query($sql);
 
     $sql    = 'SELECT * from device';

@@ -54,11 +54,9 @@ class AnvizCommand
 
     public function setSuperAdminPassword($password = '')
     {
-        if (empty($password)) {
+        if ($password === '') {
             return false;
         }
-
-        $password = intval($password);
 
         $content = Protocol::setSuperAdminPassword($password);
         if (empty($content)) {

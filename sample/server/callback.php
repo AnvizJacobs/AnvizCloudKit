@@ -265,7 +265,7 @@ class callback implements AnvizInterface
         $params = json_decode(base64_decode($row['params']), true);
 
         if (!$data || count($data) < $params['limit']) {
-            $db->query('DELETE from device_command WHERE id="' . $command_id . '"');
+            $this->updateCommand($command_id);
         } else {
             $params['start'] += count($data);
             $anvizCommand = new AnvizCommand();
@@ -320,7 +320,7 @@ class callback implements AnvizInterface
             $db->query('UPDATE employee set fingersign=' . $fingersign . ' WHERE idd="' . $idd . '"');
         }
 
-        $db->query('DELETE from device_command WHERE id="' . $command_id . '"');
+        $this->updateCommand($command_id);
 
         return true;
     }
@@ -342,22 +342,22 @@ class callback implements AnvizInterface
         $idd    = $data['idd'];
         $cardid = $data['cardid'];
         if (empty($idd) || empty($cardid)) {
+            $this->updateCommand($command_id, -1, false);
+
             return false;
         }
 
         $sql = 'UPDATE employee set cardid="' . $cardid . '" WHERE idd="' . $idd . '"';
         $db->query($sql);
 
-        $db->query('DELETE from device_command WHERE id="' . $command_id . '"');
+        $this->updateCommand($command_id);
 
         return true;
     }
 
     public function other($id, $command_id)
     {
-        global $db;
-
-        $db->query('DELETE from device_command WHERE id="' . $command_id . '"');
+        $this->updateCommand($command_id);
 
         return true;
     }
@@ -394,5 +394,24 @@ class callback implements AnvizInterface
         $db->query($sql);
 
         return $data;
+    }
+
+    public function updateCommand($id, $status = 2, $deleted = true)
+    {
+        if (empty($id)) {
+            return false;
+        }
+
+        global $db;
+
+        if ($deleted) {
+            $sql = 'UPDATE device_command SET status=1 WHERE id="' . $id . '"';
+            $db->query($sql);
+        } else {
+            $sql = 'UPDATE device_command SET status=' . $status . ' Where id="' . $id . '"';
+            $db->query($sql);
+        }
+
+        return true;
     }
 }

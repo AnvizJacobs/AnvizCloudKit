@@ -84,7 +84,7 @@ $device = $db->fetch_array($result);
                 <tr>
                     <th>Super Admin password</th>
                     <td colspan="3">
-                        <input type="number" name="superadminpassword" maxlength="6" /> &nbsp; <button id="btnSetAdminPassWord" type="button" class="btn btn-primary">Modify Super Admin password</button>
+                        <input type="text" name="superadminpassword" maxlength="6" /> &nbsp; <button id="btnSetAdminPassWord" type="button" class="btn btn-primary">Modify Super Admin password</button>
                     </td>
                 </tr>
             </table>
@@ -202,14 +202,19 @@ $device = $db->fetch_array($result);
                     alert('Error');
                     _this.button('reset');
                 } else {
-                    app.checkCommandStatus(result.data.id).done(function () {
-                        jQuery.get('ajax.php', {
-                            method: 'get_employee',
-                            idd: idd
-                        }, function(result){
-                            _this.parent().find('font').text(result.cardid);
+                    app.checkCommandStatus(result.data.id).done(function (code) {
+                        if(code == '10001'){
+                            alert('Timeout');
                             _this.button('reset');
-                        }, 'json');
+                        }else{
+                            jQuery.get('ajax.php', {
+                                method: 'get_employee',
+                                idd: idd
+                            }, function(result){
+                                _this.parent().find('font').text(result.cardid);
+                                _this.button('reset');
+                            }, 'json');
+                        }
                     });
                 }
             }, 'json');

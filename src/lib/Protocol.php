@@ -668,14 +668,18 @@ class Protocol
 
     public static function setSuperAdminPassword($password)
     {
-        if (empty($password)) {
-            return false;
-        }
-        $password = substr($password, 0, 6);
-        $password = str_pad($password, 6, 0, STR_PAD_LEFT);
+        $passlen = strlen($password);
 
         $pack = '';
-        $pack .= str_pad($password, 8, 0, STR_PAD_RIGHT);
+        if($passlen == 0){
+            $pack .= substr(pack('N', 0xFF), 0, 3);
+        }else{
+            $length = $passlen << 4;
+            $length = intval($length) + intval($password >> 16);
+            $pack .= substr(pack('n', $length), 1, 1) . substr(pack('N', $password), 2, 2);
+        }
+
+        $pack = str_pad($pack, 8, 0, STR_PAD_RIGHT);
 
         return $pack;
     }

@@ -246,6 +246,12 @@ if ($command == 'downloadAllRecords') {
         ));
         exit;
     }
+    if(!is_numeric($password)){
+        echo json_encode(array(
+            'success' => false
+        ));
+        exit;
+    }
 
     $data = $anvizCommand->setSuperAdminPassword($password);
 
