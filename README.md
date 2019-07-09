@@ -46,5 +46,5 @@
     Server IP： Mannual input
     Input IP: (Url of the 3rd step)
     ```
-5. Then on the device screen will display cloud connection ok. Open url `http://(站点域名)/sample/client/index.html` in brower, now you can see the device in page.
+5. Then on the device screen will display cloud connection ok. Open url `http://(site domain name)/sample/client/index.html` in brower, now you can see the device in page.
 6. And enter into site root directory log folder to check the device communicaiton logs with server
