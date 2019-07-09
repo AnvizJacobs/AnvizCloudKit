@@ -37,12 +37,12 @@
 ### Testing process
 1. Deploy the Apache + php environment, Install `php_soap` Extended, `php-mcrypt` Extended and `rewrite` support
 2. Put the directory file to site directory, input `http://(Site domain name)/sample/server/webserver/wsdl.html` in the browser, can be display wsdl pages means successful
-3. Open url `http://(站点域名)/sample/client/index.html` in brower. Register new user and record the device url, username and password
+3. Open url `http://(site domain name)/sample/client/index.html` in brower. Register new user and record the device url, username and password
 3. Power on the device,and setup device network setting connect internet
 4. Enter into `network` - `cloud` menu follow the below setup
     ```
     User Name：（User name of the 3rd step）
-    密码：（Pasword of the 3rd step）
+    Password：（Pasword of the 3rd step）
     Server IP： Mannual input
     Input IP: (Url of the 3rd step)
     ```
