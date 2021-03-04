@@ -5,10 +5,12 @@
 ------------
 
 ### 支持设备
-> `C2 Pro/W1/W2/OA1000'
+> `C2 Pro/W1/W2/OA1000`
+> `FaceDeep3/FaceDeep5`
+> `MBIO`
 
 ### 环境要求
-> Apache + php(php版本在5.4以上)
+> Apache + php(php版本为5.x/7.0)
 > 扩展要求： php_soap/php-mcrypt
 > 支持rewrite
 

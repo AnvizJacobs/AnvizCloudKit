@@ -306,6 +306,34 @@ class Protocol
         return $result;
     }
 
+    /**
+     * @Created    by Jacobs <jacobs@anviz.com>
+     * @Name       : FaceDevice
+     *
+     * @param string $content
+     *
+     * @return array|bool
+     * @Description:
+     */
+    public static function FaceDevice($content = '')
+    {
+        $record = array();
+        /** ID On Device */
+        $record['idd'] = (ord($content[0]) << 32) + (ord($content[1]) << 24) + (ord($content[2]) << 16) + (ord($content[3]) << 8) + ord($content[4]);
+
+        /**
+         * 1: Fingerprint
+         * 2: Facepass
+         */
+        $record['sign'] = 2;
+        $record['temp_id'] = ord($content[5]);
+        /** the data of face */
+        $record['template'] = substr($content, 6);
+
+        return $record;
+
+    }
+
     public static function EnrollFinger($content = '')
     {
         if (empty($content)) {
@@ -332,6 +360,27 @@ class Protocol
 
         return $result;
     }
+
+    public static function EnrollFace($content = '')
+    {
+        if (empty($content)) {
+            return false;
+        }
+        $row = $content;
+
+        /** ID On Device */
+        $result['idd'] = (ord($row[0]) << 32) + (ord($row[1]) << 24) + (ord($row[2]) << 16) + (ord($row[3]) << 8) + ord($row[4]);
+        /**
+         * 1: Fingerprint
+         * 2: Facepass
+         */
+        $result['sign'] = 2;
+        $result['temp_id'] = ord($row[5]);
+        $result['template'] = substr($row, 6);
+
+        return $result;
+    }
+
 
     public static function EnrollCardDevice($content = '')
     {
@@ -607,6 +656,36 @@ class Protocol
         return $pack;
     }
 
+    public static function getFace($idd)
+    {
+        if (empty($idd)) {
+            return false;
+        }
+
+        $pack = pack("C", intval($idd / 0x00FFFFFFFF)) . pack("N", $idd & 0x00FFFFFFFF);
+
+        return $pack;
+
+    }
+
+    public static function setFace($face)
+    {
+        if (empty($face) || empty($face['idd']) || empty($face['template'])) {
+            return false;
+        }
+
+        $idd  = $face['idd'];
+        $sign = 20;
+        $fp   = $face['template'];
+
+        $pack = '';
+        $pack .= pack("C", intval($idd / 0x00FFFFFFFF)) . pack("N", $idd & 0x00FFFFFFFF);
+        $pack .= pack('C', $sign);
+        $pack .= $fp;
+
+        return $pack;
+    }
+
     public static function setEnrollFinger($finger)
     {
         if (empty($finger) || empty($finger['idd'])) {
@@ -750,5 +829,66 @@ class Protocol
             default:
                 return Tools::encrypt3DES($string, $sha1);
         }
+    }
+
+    public static function dataIsFace($content=''){
+        /**
+         * If temp_id = 20,the device is face type.(0~9 means finger type)
+         */
+        $temp_id = ord($content[5]);
+        if ($temp_id == 20) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @Created by Jacobs <jacobs@anviz.com>
+     * @Name: deviceIsFace
+     * @param string $firmware
+     * @return bool
+     * @Description:
+     */
+    public static function deviceIsFace($firmware = ''){
+        $firmware_type = self::getFirmwareType($firmware);
+
+        if(empty($firmware_type)){
+            return false;
+        }
+
+        if(in_array($firmware_type, array(72,74,76,78,80))){
+            return true;
+        }
+        if(in_array(substr($firmware_type, 0, 3), array('72_', '74_', '76_', '78_','80_'))){
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function getFirmwareType($firmware = '')
+    {
+        if(empty($firmware))
+        {
+            return 0;
+        }
+
+        if (substr($firmware, 0, 1) == 'V') {
+            $firmware = substr($firmware, 1, strlen($firmware) - 1);
+        }
+
+        $_temp = explode('.', $firmware);
+        if (count($_temp) < 3) {
+            return 0;
+        }
+
+        $type = intval($_temp[1]);
+        if (strpos($_temp[2], '_') !== false) {
+            $pos = strpos($_temp[2], '_');
+            $type .= substr($_temp[2], $pos, strlen($_temp[2]) - $pos);
+        } else {
+
+        }
+        return $type;
     }
 }

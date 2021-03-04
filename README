@@ -3,9 +3,11 @@ Anviz device cloud PHP interface kit
 ========================================================================================================================
 Support device
     C2 Pro/W1/W2/OA1000
+    FaceDeep3/FaceDeep5
+    MBIO
 
 Environmental requirements
-    Apache + php(php version above 5.4 )
+    Apache + php(php version support 5.x/7.0)
     Extended requirements： php_soap/php-mcrypt
     support rewrite
 

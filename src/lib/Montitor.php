@@ -129,18 +129,21 @@ class Montitor
                 break;
             case CMD_GETALLFINGER:
             case CMD_GETONEFINGER:
-                $result = Protocol::FingerDevice($data['content']);
+
+                $result = Protocol::dataIsFace($data['content']) ?
+                    Protocol::FaceDevice($data['content']) : Protocol::FingerDevice($data['content']);
+
                 $this->log->write('debug', 'actionTransport: ' . CMD_GETALLFINGER . ' - ' . json_encode($result));
                 if (!$this->callback->finger($device_id, $data['id'], $result)) {
                     return Protocol::showError($token, $device_id, CMD_GETALLFINGER);
                 }
                 break;
             case CMD_ENROLLFINGER:
-                $fp = fopen(dirname(__FILE__).'/bbb.txt', 'w+');
-                fwrite($fp, $data['content']);
-                fclose($fp);
-                $result = Protocol::EnrollFinger($data['content']);
-                $this->log->write('debug', 'actionTransport: ' . CMD_ENROLLFINGER . ' - ' . $result['idd'].' - '.$result['temp_id']);
+
+                $result = Protocol::dataIsFace($data['content'])?
+                    Protocol::EnrollFace($data['content']):Protocol::EnrollFinger($data['content']);
+
+                    $this->log->write('debug', 'actionTransport: ' . CMD_ENROLLFINGER . ' - ' . $result['idd'].' - '.$result['temp_id']);
                 if (!$this->callback->enrollFinger($device_id, $data['id'], $result)) {
                     return Protocol::showError($token, $device_id, CMD_ENROLLFINGER);
                 }
@@ -238,4 +241,6 @@ class Montitor
 
         return Tools::R($command);
     }
+
+
 }

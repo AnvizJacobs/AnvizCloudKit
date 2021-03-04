@@ -66,7 +66,7 @@ class AnvizCommand
         $id = Tools::createCommandId();
         return array(
             'id'      => $id,
-            'params'  => $data,
+            'params'  => [],
             'command' => CMD_SETADMINPASSWORD,
             'content' => base64_encode($content),
         );
@@ -382,6 +382,19 @@ class AnvizCommand
     }
 
     /**
+     * @param $idd
+     * @return bool|string
+     * @description The command of download the specify employee face
+     * @params
+     *      idd：Employee ID on device
+     */
+    public function getFace($idd)
+    {
+        return $this->getFinger($idd);
+
+    }
+
+    /**
      * @author jacobs@anviz.com
      * @param $fingers
      * @return bool|string
@@ -463,6 +476,73 @@ class AnvizCommand
         );
     }
 
+
+    /**
+     * @author jacobs@anviz.com
+     * @param $face
+     * @return bool|string
+     * @description The command of upload one face
+     * @params
+     *      face: 人脸信息
+     *           array(
+     *                      'idd' => 1001,          //Employee ID on device
+     *                      'sign' => 20,            //Face sign is 20
+     *                      'template' => (BLOB)    //Face template. The field type select blob type when save to database
+     *                  ),
+     */
+    public function setFace($face)
+    {
+        if (empty($face)) {
+            return false;
+        }
+
+        $content = Protocol::setFace($face);
+        if (empty($content)) {
+            return false;
+        }
+
+        $id = Tools::createCommandId();
+        return array(
+            'id'      => $id,
+            'params'  => array(),
+            'command' => CMD_PUTONEFINGER,
+            'content' => base64_encode($content),
+        );
+    }
+
+
+    /**
+     * @author jacobs@anviz.com
+     * @param $idd
+     * @return bool|string
+     * @description The command of remote enroll face
+     * @params
+     *      idd: Employee ID on device
+     */
+    public function setEnrollFace($idd)
+    {
+        if (empty($idd)) {
+            return false;
+        }
+
+        $data   = array(
+            'idd'    => $idd,
+            'sign'   => 20,
+        );
+        $content = Protocol::setEnrollFinger($data);
+        if (empty($content)) {
+            return false;
+        }
+
+        $id = Tools::createCommandId();
+        return array(
+            'id'      => $id,
+            'params'  => $data,
+            'command' => CMD_ENROLLFINGER,
+            'content' => base64_encode($content),
+        );
+    }
+
     /**
      * @author jacobs@anviz.com
      * @param $idd
@@ -507,6 +587,9 @@ class AnvizCommand
         if (empty($idd)) {
             return false;
         }
+        $data   = array(
+            'idd'    => $idd
+        );
 
         $content = Protocol::setEnrollCard($idd);
         if (empty($content)) {
@@ -538,6 +621,14 @@ class AnvizCommand
             'command' => CMD_DELETEALLFINGER,
             'content' => base64_encode($content),
         );
+    }
+
+    /**
+     * @return bool|string
+     * @description The command of clear all face (but not clear employee and attendance record)
+     */
+    public function clearFace(){
+        return $this->clearFinger();
     }
 
     /**
@@ -573,6 +664,18 @@ class AnvizCommand
             'command' => CMD_DELETEONEFINGER,
             'content' => base64_encode($content),
         );
+    }
+
+    /**
+     * @param $idd
+     * @return bool|string
+     * @description The command of delete the specify employee face(But not delete employee and attendance record)
+     * @params
+     *      idd: Employee ID on device
+     */
+    public function deleteFace($idd)
+    {
+        return $this->deleteFinger($idd, 20);
     }
 
     /**

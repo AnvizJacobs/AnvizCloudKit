@@ -5,10 +5,12 @@
 ------------
 
 ### Support device
-> `C2 Pro`/`W1`/`W2`/`OA1000`
+> `C2 Pro/W1/W2/OA1000`
+> `FaceDeep3/FaceDeep5`
+> `MBIO`
 
 ### Environmental requirements
-> Apache + php(php version above 5.4)
+> Apache + php(php version support 5.x/7.0)
 > Extended requirements: `php_soap`/`php_mcrypt`
 > support `rewrite`
 
@@ -47,4 +49,4 @@
     Server IP： (http://(Site domain name)/sample/server/webserver)
     ```
 6. Then on the device screen will display cloud connection ok. Open url `http://(site domain name)/sample/client/index.html` in brower, now you can see the device in page.
-6. And enter into site root directory log folder to check the device communicaiton logs with server
+7. And enter into site root directory log folder to check the device communicaiton logs with server
