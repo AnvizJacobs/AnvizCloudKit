@@ -167,6 +167,65 @@ class callback implements AnvizInterface
         return true;
     }
 
+
+    public function temperatureRecord($id, $command_id, $data)
+    {
+        global $db;
+
+        $sql    = 'SELECT * FROM device WHERE id="' . $id . '"';
+        $result = $db->query($sql);
+        if ($db->num_rows($result) <= 0) {
+            return false;
+        }
+
+        $device    = $db->fetch_array($result);
+        $device_id = $device['id'];
+        $user_id   = $device['user_id'];
+
+
+        foreach ($data as $row) {
+            $idd       = $row['idd'];
+            $checktime = $row['checktime'];
+            $mask = $row['mask'];
+            $temperature = $row['temperature'];
+            $rid = $row['rid'];
+
+            if($idd){
+                $sql    = 'SELECT * FROM temperature_records WHERE idd="' . $idd . '" AND device_id="' . $device_id . '" AND checktime="' . $checktime . '"';
+                $result = $db->query($sql);
+                if ($db->num_rows($result) > 0) {
+                    continue;
+                }
+            }
+
+            $sql = 'INSERT INTO temperature_records(idd, device_id, checktime, user_id,mask,temperature,rid) VALUES ("' . $idd . '", "' . $device_id . '", "' . $checktime . '", "' . $user_id . '", "' . $mask . '", "' . $temperature . '", "' . $rid . '")';
+            $db->query($sql);
+        }
+
+        $sql    = 'SELECT * FROM device_command WHERE id="' . $command_id . '"';
+        $result = $db->query($sql);
+        if ($db->num_rows($result) <= 0) {
+            return true;
+        }
+
+        $row    = $db->fetch_array($result);
+        $params = json_decode(base64_decode($row['params']), true);
+
+        if (!$data || count($data) < $params['limit']) {
+            $db->query('DELETE from device_command WHERE id="' . $command_id . '"');
+        } else {
+            $params['start'] += count($data);
+            $anvizCommand = new AnvizCommand();
+            $_data        = $anvizCommand->getNewTemperatureRecords($params['start'], $params['limit']);
+            $content      = $_data['content'];
+
+            $db->query('UPDATE device_command SET content="' . $content . '", status=0, params="' . base64_encode(json_encode($params)) . '" WHERE id="' . $command_id . '"');
+        }
+
+        return true;
+    }
+
+
     public function employee($id, $command_id, $data)
     {
         global $db;

@@ -6,7 +6,7 @@
 
 ### Support device
 > `C2 Pro/W1/W2/OA1000`
-> `FaceDeep3/FaceDeep5`
+> `FaceDeep3/FaceDeep5/FaceDeep3-IRT/FaceDeep5-IRT`
 > `MBIO`
 
 ### Environmental requirements

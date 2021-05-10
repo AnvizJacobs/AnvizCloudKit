@@ -707,6 +707,62 @@ class AnvizCommand
         );
     }
 
+
+    /**
+     * @author jacobs@anviz.com
+     * @param int $start
+     * @param int $limit
+     * @return bool|string
+     * @description 获取新测温记录信息
+     * @params
+     *      start：位置偏移量
+     *      limit: 指纹数量
+     */
+    public function getNewTemperatureRecords($start = 0, $limit = 100)
+    {
+        $start = empty($start) ? 0 : $start;
+        $limit = empty($limit) ? 100 : $limit;
+        $data  = array(
+            'start' => $start,
+            'limit' => $limit,
+        );
+        $content = Protocol::getTempRecords($data);
+        if (empty($content)) {
+            return false;
+        }
+
+        $id = Tools::createCommandId();
+        return array(
+            'id'      => $id,
+            'params'  => $data,
+            'command' => CMD_GETNEWTEMPRECORD,
+            'content' => base64_encode($content),
+        );
+    }
+
+    /**
+     * @author jacobs@anviz.com
+     * @return bool|string
+     * @description 测温配置
+     */
+    public function setMaskTemperatureConfig($data)
+    {
+
+        $content = Protocol::setMaskTemperatureConfig($data);
+        if (empty($content)) {
+            return false;
+        }
+
+        $id = Tools::createCommandId();
+        return array(
+            'id'      => $id,
+            'params'  => $data,
+            'command' => CMD_SETMASKTEMP,
+            'content' => base64_encode($content),
+        );
+    }
+
+
     /**
      * @author jacobs@anviz.com
      * @param int $start

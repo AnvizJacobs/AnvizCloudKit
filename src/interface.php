@@ -86,6 +86,30 @@ interface AnvizInterface
 
     /**
      * @return boolean
+     * @description Get temperature records. By temperatureRecord will call back this method
+     * @param
+     *      id: string Device ID
+     *      task_id: TASK ID
+     *      records: array
+     *              array(
+     *                  array(
+     *                      'idd' => 1001,          //Employee ID on device
+     *                      'checktime' => 1356879141,  //Attendance time. Unix timestamp
+     *                      'mask' => 0,          //mask
+     *                      'temperature' => 37.0,          //temperature
+     *                  ),
+     *                  array(
+     *                      'idd' => 1001,
+     *                      'checktime' => 1356879141,
+     *                      'mask' => 0,          //mask
+     *                      'temperature' => 37.0,          //temperature
+     *                  ),
+     *              )
+     */
+    public function temperatureRecord($id, $command_id, $data);
+
+    /**
+     * @return boolean
      * @description Get Employee. By getEmployee will call back this method
      * @param
      *      id: string Device ID

@@ -42,6 +42,10 @@ define('CMD_ENROLLCARD', 9008); //Remote registration card
 define('CMD_GETALLRECORD', 3001); //Download all attendance records form device
 define('CMD_GETNEWRECORD', 3002); //Download new attendance records from device
 
+define('CMD_GETNEWTEMPRECORD', 3005); //Download new temperature records from device
+define('CMD_SETMASKTEMP', 1112);//Set the temperature measurement configuration
+define('CMD_GETMASKTEMP', 1012);//Get the temperature measurement configuration
+
 class Protocol
 {
     /**
@@ -147,11 +151,11 @@ class Protocol
         $result['ipaddress'] = ord($content[1]) . "." . ord($content[2]) . "." . ord($content[3]) . "." . ord($content[4]);
         $result['netmask']   = ord($content[5]) . "." . ord($content[6]) . "." . ord($content[7]) . "." . ord($content[8]);
         $result['mac']       = strtoupper(str_pad(sprintf("%x", ord($content[9])), 2, "0", STR_PAD_LEFT)) . '-'
-        . strtoupper(str_pad(sprintf("%x", ord($content[10])), 2, "0", STR_PAD_LEFT)) . '-'
-        . strtoupper(str_pad(sprintf("%x", ord($content[11])), 2, "0", STR_PAD_LEFT)) . '-'
-        . strtoupper(str_pad(sprintf("%x", ord($content[12])), 2, "0", STR_PAD_LEFT)) . '-'
-        . strtoupper(str_pad(sprintf("%x", ord($content[13])), 2, "0", STR_PAD_LEFT)) . '-'
-        . strtoupper(str_pad(sprintf("%x", ord($content[14])), 2, "0", STR_PAD_LEFT));
+            . strtoupper(str_pad(sprintf("%x", ord($content[10])), 2, "0", STR_PAD_LEFT)) . '-'
+            . strtoupper(str_pad(sprintf("%x", ord($content[11])), 2, "0", STR_PAD_LEFT)) . '-'
+            . strtoupper(str_pad(sprintf("%x", ord($content[12])), 2, "0", STR_PAD_LEFT)) . '-'
+            . strtoupper(str_pad(sprintf("%x", ord($content[13])), 2, "0", STR_PAD_LEFT)) . '-'
+            . strtoupper(str_pad(sprintf("%x", ord($content[14])), 2, "0", STR_PAD_LEFT));
         $result['gateway'] = ord($content[15]) . "." . ord($content[16]) . "." . ord($content[17]) . "." . ord($content[18]);
         /*$result['serverip'] = ord($content[19]) . "." . ord($content[20]) . "." . ord($content[21]) . "." . ord($content[22]);
         $result['remote'] = ord($content[23]);
@@ -448,6 +452,63 @@ class Protocol
         return $result;
     }
 
+    /**
+     * @Created    by Jacobs <jacobs@anviz.com>
+     * @Name       : TemperatureRecordDevice
+     *
+     * @param string $content
+     *
+     * @return array|bool
+     * @Description:
+     */
+    public static function TemperatureRecordDevice($content = '')
+    {
+        if (empty($content)) {
+            return false;
+        }
+
+        /**
+         * The length of each record is 16
+         * if the length of data can not be 16 whole, it's dirty data
+         */
+        if (strlen($content) % 24 != 0) {
+            return false;
+        }
+        $result = array();
+
+        /** the total of records in this acquisition */
+        $count = strlen($content) / 24;
+        for ($i = 0; $i < $count; $i++) {
+            $row = substr($content, $i * 24, 24);
+
+            $record = array();
+
+            /** ID On Device */
+            $record['idd'] = (ord($row[0]) << 32) + (ord($row[1]) << 24) + (ord($row[2]) << 16) + (ord($row[3]) << 8) + ord($row[4]);
+            /** Check Time */
+            $record['checktime'] = (ord($row[5]) << 24) + (ord($row[6]) << 16) + (ord($row[7]) << 8) + ord($row[8]);
+            $record['checktime'] = $record['checktime'] + strtotime('2000-01-02 00:00:00');
+
+            /** TemperatureID On Device */
+            $record['rid'] = (ord($row[9]) << 56) + (ord($row[10]) << 48) + (ord($row[11]) << 40) + (ord($row[12]) << 32) + (ord($row[13]) << 24) + (ord($row[14]) << 16) + (ord($row[15]) << 8) + ord($row[16]);
+
+            /** Work Type */
+//            $record['worktype'] = ord($row[17]);
+            /** Temperature */
+            $record['temperature'] = (ord($row[18]) << 8) + ord($row[19]);
+            $record['temperature'] = $record['temperature']/10;
+
+            /** Temperature */
+            $record['mask'] = ord($row[20]);
+            /** Check Type */
+//            $record['checktype'] = ord($row[21]);
+
+            $result[$i] = $record;
+        }
+
+        return $result;
+    }
+
     public static function RecordImport($content = '')
     {
         if (empty($content)) {
@@ -525,7 +586,12 @@ class Protocol
     public static function getEmployee($idd)
     {
         $pack = '';
-        $pack .= str_pad($idd, 16, '0', STR_PAD_LEFT);
+
+
+        $pack .= pack("C", intval($idd / 0x00FFFFFFFF)) . pack("N", $idd & 0x00FFFFFFFF);
+
+
+//        $pack .= str_pad($idd, 16, '0', STR_PAD_LEFT);
 
         return $pack;
     }
@@ -743,6 +809,86 @@ class Protocol
         $pack .= str_pad($limit, 8, '0', STR_PAD_LEFT);
 
         return $pack;
+    }
+
+
+    public static function getTempRecords($data = array())
+    {
+        if (empty($data))
+            return false;
+
+        if (!isset($data['start']))
+            return false;
+
+        $rid = $data['start']?1:$data['start'];
+
+        $num = $data['limit']?100:$data['limit'];
+
+
+        $pack =  pack("N", intval($rid / 0x00FFFFFFFF)) . pack("N", $rid& 0x00FFFFFFFF);
+
+        $pack .= pack('n', $num);
+
+        return $pack;
+    }
+
+    public static function setMaskTemperatureConfig(array $data = []){
+        if(empty($data)){
+            return false;
+        }
+
+        $mask_detection = $data['mask_detection'];
+        $mask_alarm = $data['mask_alarm'];
+
+        $work_mode = $data['work_mode'];
+        $relay_output = $data['relay_output'];
+        $temp_unit = $data['temp_unit'];
+        $fever_threshold = $data['fever_threshold'];
+        $fever_alarm = $data['fever_alarm'];
+        $temp_opendoor = $data['temp_opendoor'];
+        $temp_access = $data['temp_access'];
+
+        $pack = '';
+        $pack .= pack('C', $mask_detection);
+        $pack .= pack('C', $mask_alarm);
+
+        $pack .= pack('C', $work_mode);
+        $pack .= pack('C', $relay_output);
+        $pack .= pack('C', $temp_unit);
+
+        $pack .= pack('n', $fever_threshold);
+
+        $pack .= pack('C', $fever_alarm);
+        $pack .= pack('C', $temp_opendoor);
+        $pack .= pack('C', $temp_access);
+
+
+
+
+        return $pack;
+    }
+
+
+
+    public static function getMaskTemperatureConfig($data = '')
+    {
+        if (empty($data)) {
+            return false;
+        }
+        $record = array();
+        $record['mask_detection'] = ord($data[0]);
+        $record['mask_alarm'] = ord($data[1]);
+
+        $record['work_mode'] = ord($data[2]);
+        $record['relay_output'] = ord($data[3]);
+        $record['temp_unit'] = ord($data[4]);
+
+        $record['fever_threshold'] = (ord($data[5]) << 8) + ord($data[6]);
+
+        $record['fever_alarm'] = ord($data[7]);
+        $record['temp_opendoor'] = ord($data[8]);
+        $record['temp_access'] = ord($data[9]);
+        return $record;
     }
 
     public static function setSuperAdminPassword($password)

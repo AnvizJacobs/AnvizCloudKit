@@ -143,7 +143,7 @@ class Montitor
                 $result = Protocol::dataIsFace($data['content'])?
                     Protocol::EnrollFace($data['content']):Protocol::EnrollFinger($data['content']);
 
-                    $this->log->write('debug', 'actionTransport: ' . CMD_ENROLLFINGER . ' - ' . $result['idd'].' - '.$result['temp_id']);
+                $this->log->write('debug', 'actionTransport: ' . CMD_ENROLLFINGER . ' - ' . $result['idd'].' - '.$result['temp_id']);
                 if (!$this->callback->enrollFinger($device_id, $data['id'], $result)) {
                     return Protocol::showError($token, $device_id, CMD_ENROLLFINGER);
                 }
@@ -163,6 +163,15 @@ class Montitor
                     return Protocol::showError($token, $device_id, CMD_GETALLRECORD);
                 }
                 break;
+
+            case CMD_GETNEWTEMPRECORD:
+                $result = Protocol::TemperatureRecordDevice($data['content']);
+                $this->log->write('debug', 'actionTransport: ' . CMD_GETNEWTEMPRECORD . ' - ' . json_encode($result));
+                if (!$this->callback->temperatureRecord($device_id, $data['id'], $result)) {
+                    return Protocol::showError($token, $device_id, CMD_GETNEWTEMPRECORD);
+                }
+                break;
+
             default:
                 if (!$this->callback->other($device_id, $data['id'])) {
                     return Protocol::showError($token, $device_id, CMD_GETALLRECORD);
@@ -221,6 +230,14 @@ class Montitor
                 $this->log->write('debug', 'actionReport: Command - ' . $data['command'] . ', Data - ' . json_encode($result));
                 if (!$this->callback->record($device_id, $data['id'], $result)) {
                     return Protocol::showError($token, $device_id, CMD_GETALLRECORD);
+                }
+                break;
+
+            case CMD_GETNEWTEMPRECORD:
+                $result = Protocol::TemperatureRecordDevice($data['content']);
+                $this->log->write('debug', 'actionReport: Command - ' . $data['command'] . ', Data - ' . json_encode($result));
+                if (!$this->callback->temperatureRecord($device_id, $data['id'], $result)) {
+                    return Protocol::showError($token, $device_id, CMD_GETNEWTEMPRECORD);
                 }
                 break;
             default:

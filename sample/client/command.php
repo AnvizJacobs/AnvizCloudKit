@@ -24,7 +24,69 @@ if (empty($device_id) || empty($command)) {
 
 $anvizCommand = new AnvizCommand();
 
-if ($command == 'downloadAllRecords') {
+
+
+if ($command == 'downloadNewTemperatureRecords') {
+
+    $data = $anvizCommand->getNewTemperatureRecords(0, 100);
+
+    $id      = $data['id'];
+    $params  = $data['params'];
+    $command = $data['command'];
+    $content = $data['content'];
+
+    $sql = 'INSERT INTO device_command(id, device_id, command, content, status, params)
+            VALUES ("' . $id . '", "' . $device_id . '", "' . $command . '", "' . $content . '", 0, "' . base64_encode(json_encode($params)) . '")';
+    $db->query($sql);
+
+    echo json_encode(array(
+        'success' => true,
+        'data'    => array(
+            'id' => $id,
+        ),
+    ));
+}elseif ($command == 'setMaskTemperatureConfig') {
+
+    $mask_detection = $_REQUEST['mask_detection'];
+    $mask_alarm = $_REQUEST['mask_alarm'];
+    $work_mode = $_REQUEST['work_mode'];
+    $relay_output = $_REQUEST['relay_output'];
+    $temp_unit = $_REQUEST['temp_unit'];
+    $fever_threshold = $_REQUEST['fever_threshold']*10;
+    $fever_alarm = $_REQUEST['fever_alarm'];
+    $temp_opendoor = $_REQUEST['temp_opendoor'];
+    $temp_access = $_REQUEST['temp_access'];
+
+    $_data = [
+        'mask_detection' => $mask_detection ,
+        'mask_alarm' => $mask_alarm ,
+        'work_mode' => $work_mode,
+        'relay_output' => $relay_output ,
+        'temp_unit' => $temp_unit ,
+        'fever_threshold' => $fever_threshold ,
+        'fever_alarm' => $fever_alarm,
+        'temp_opendoor' => $temp_opendoor ,
+        'temp_access' => $temp_access ,
+    ];
+
+    $data = $anvizCommand->setMaskTemperatureConfig($_data);
+
+    $id      = $data['id'];
+    $params  = $data['params'];
+    $command = $data['command'];
+    $content = $data['content'];
+
+    $sql = 'INSERT INTO device_command(id, device_id, command, content, status, params)
+            VALUES ("' . $id . '", "' . $device_id . '", "' . $command . '", "' . $content . '", 0, "' . base64_encode(json_encode($params)) . '")';
+    $db->query($sql);
+
+    echo json_encode(array(
+        'success' => true,
+        'data'    => array(
+            'id' => $id,
+        ),
+    ));
+}elseif ($command == 'downloadAllRecords') {
 
     $data = $anvizCommand->getRecords(0, 100);
 

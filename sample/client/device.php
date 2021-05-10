@@ -89,6 +89,130 @@ $device = $db->fetch_array($result);
                 </tr>
             </table>
         </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered">
+                <tr>
+                    <th>Mask Detection</th>
+                    <td>
+                        <div class="btn-group">
+                            <button id="MaskDetection" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-id="1">No Mask Wearing Alarm
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="" class="MaskDetection" data-id="0">Off</a></li>
+                                <li><a href="" class="MaskDetection" data-id="1">No Mask Wearing Alarm</a></li>
+                                <li><a href="" class="MaskDetection" data-id="2">Wear Mask allow to Access</a></li>
+                            </ul>
+                        </div>
+                    </td>
+
+                    <th>Mask Alarm</th>
+                    <td>
+                        <div class="btn-group">
+                            <button id="MaskAlarm" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-id="1">Enable
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="" class="MaskAlarm" data-id="0">Off</a></li>
+                                <li><a href="" class="MaskAlarm" data-id="1">Enable</a></li>
+                            </ul>
+                        </div>
+                    </td>
+
+
+                    <th>Work Mode</th>
+                    <td>
+                        <div class="btn-group">
+                            <button id="WorkMode" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-id="1">Normal Mode
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="" class="WorkMode" data-id="0">Disable Temperature Detection</a></li>
+                                <li><a href="" class="WorkMode" data-id="1">Normal Mode</a></li>
+                                <li><a href="" class="WorkMode" data-id="2">Visitor Mode</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Relay Control</th>
+                    <td>
+                        <div class="btn-group">
+                            <button id="RelayControl" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-id="1">Fever Alarm Output
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="" class="RelayControl" data-id="0">Door Open</a></li>
+                                <li><a href="" class="RelayControl" data-id="1">Fever Alarm Output</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                    <th>C°/F°</th>
+                    <td>
+                        <div class="btn-group">
+                            <button id="Unit" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-id="0">°C
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="" class="Unit" data-id="0">°C</a></li>
+                                <li><a href="" class="Unit" data-id="1">°F</a></li>
+                            </ul>
+                        </div>
+                    </td>
+
+                    <th>Fever Temperature(°C)</th>
+                    <td>
+                        <input id="FeverTemperature" type="text" name="FeverTemperature" maxlength="6" value="37.3" />
+                    </td>
+                </tr>
+
+                <tr>
+
+                    <th>Fever Alarm</th>
+                    <td>
+                        <div class="btn-group">
+                            <button id="FeverAlarm" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-id="1">Enable
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="" class="FeverAlarm" data-id="0">Off</a></li>
+                                <li><a href="" class="FeverAlarm" data-id="1">Enable</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                    <th>Access the Door with Temperature</th>
+                    <td>
+                        <div class="btn-group">
+                            <button id="AccessDoor" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-id="1">Enable
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="" class="AccessDoor" data-id="0">Off</a></li>
+                                <li><a href="" class="AccessDoor" data-id="1">Enable</a></li>
+                            </ul>
+                        </div>
+                    </td>
+
+
+                    <th>Low Temperature to open Door</th>
+                    <td>
+                        <div class="btn-group">
+                            <button id="LowTemperature" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-id="1">Enable
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="" class="LowTemperature" data-id="0">Off</a></li>
+                                <li><a href="" class="LowTemperature" data-id="1">Enable</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td colspan="6"><button id="btnPreventionSetup" type="button" class="btn btn-primary">Prevention Setup</button></td>
+                </tr>
+            </table>
+        </div>
+
+
+
         <div>
 
             <!-- Nav tabs -->
@@ -107,6 +231,10 @@ $device = $db->fetch_array($result);
                     <div>
                         <button id="btnDownloadAllRecords" type="button" class="btn btn-primary">Download All Records
                         </button>
+
+                        <button id="btnDownloadNewTemperatureRecords" type="button" class="btn btn-primary">Download New Temperature Records
+                        </button>
+
                         <div style="display: none;">
                             <form id="formImportBackFile"
                                   action="command.php?id=<?php echo $device['id']; ?>&command=importBackFile"
@@ -119,6 +247,9 @@ $device = $db->fetch_array($result);
                     </div>
                     <div id="RecordsList">
                         <?php require dirname(__FILE__) . '/common/recordlist.php';?>
+                    </div>
+                    <div id="TemperatureRecordsList">
+                        <?php require dirname(__FILE__) . '/common/temperaturerecordlist.php';?>
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="employees" style="padding: 10px;">
@@ -220,7 +351,7 @@ $device = $db->fetch_array($result);
             }, 'json');
         });
         jQuery('body').on('click', '.btnEnrollFinger a', function(e){
-             e.preventDefault();
+            e.preventDefault();
             var _this = jQuery(this);
             _this.parents('.btn-group').find('button').button('loading');
             var device_id = jQuery('#device_id').val();
@@ -255,6 +386,24 @@ $device = $db->fetch_array($result);
                 } else {
                     app.checkCommandStatus(result.data.id).done(function () {
                         jQuery('#RecordsList').load('common/recordlist.php', {id: device_id});
+                        _this.button('reset');
+                    });
+                }
+            }, 'json');
+        });
+
+
+        jQuery('#btnDownloadNewTemperatureRecords').click(function (e) {
+            var _this = jQuery(this);
+            _this.button('loading');
+            var device_id = jQuery('#device_id').val();
+            jQuery.post('command.php', {id: device_id, command: 'downloadNewTemperatureRecords'}, function (result) {
+                if (!result.success) {
+                    alert('Error');
+                    _this.button('reset');
+                } else {
+                    app.checkCommandStatus(result.data.id).done(function () {
+                        jQuery('#TemperatureRecordsList').load('common/temperaturerecordlist.php', {id: device_id});
                         _this.button('reset');
                     });
                 }
@@ -354,6 +503,134 @@ $device = $db->fetch_array($result);
             var form = jQuery('#formImportBackFile');
             form.submit();
         });
+
+        jQuery('.MaskDetection').click(function(e){
+            e.preventDefault();
+            var _this = jQuery(this);
+            var id = _this.data("id");
+
+            var MaskDetection= jQuery("#MaskDetection");
+            MaskDetection.html(_this.text());
+            MaskDetection.data("id", id);
+        });
+
+        jQuery('.MaskAlarm').click(function(e){
+            e.preventDefault();
+            var _this = jQuery(this);
+            var id = _this.data("id");
+
+            var MaskAlarm= jQuery("#MaskAlarm");
+            MaskAlarm.html(_this.text());
+            MaskAlarm.data("id", id);
+        });
+
+        jQuery('.WorkMode').click(function(e){
+            e.preventDefault();
+            var _this = jQuery(this);
+            var id = _this.data("id");
+
+            var WorkMode= jQuery("#WorkMode");
+            WorkMode.html(_this.text());
+            WorkMode.data("id", id);
+        });
+
+        jQuery('.RelayControl').click(function(e){
+            e.preventDefault();
+            var _this = jQuery(this);
+            var id = _this.data("id");
+
+            var RelayControl= jQuery("#RelayControl");
+            RelayControl.html(_this.text());
+            RelayControl.data("id", id);
+        });
+
+        jQuery('.Unit').click(function(e){
+            e.preventDefault();
+            var _this = jQuery(this);
+            var id = _this.data("id");
+
+            var Unit= jQuery("#Unit");
+            Unit.html(_this.text());
+            Unit.data("id", id);
+        });
+
+        jQuery('.FeverAlarm').click(function(e){
+            e.preventDefault();
+            var _this = jQuery(this);
+            var id = _this.data("id");
+
+            var FeverAlarm= jQuery("#FeverAlarm");
+            FeverAlarm.html(_this.text());
+            FeverAlarm.data("id", id);
+        });
+
+        jQuery('.AccessDoor').click(function(e){
+            e.preventDefault();
+            var _this = jQuery(this);
+            var id = _this.data("id");
+
+            var AccessDoor= jQuery("#AccessDoor");
+            AccessDoor.html(_this.text());
+            AccessDoor.data("id", id);
+        });
+
+        jQuery('.LowTemperature').click(function(e){
+            e.preventDefault();
+            var _this = jQuery(this);
+            var id = _this.data("id");
+
+            var LowTemperature= jQuery("#LowTemperature");
+            LowTemperature.html(_this.text());
+            LowTemperature.data("id", id);
+        });
+
+        jQuery('#btnPreventionSetup').click(function(e){
+            var MaskDetection =jQuery("#MaskDetection").data("id");
+            var MaskAlarm =jQuery("#MaskAlarm").data("id");
+
+            var WorkMode =jQuery("#WorkMode").data("id");
+            var RelayControl =jQuery("#RelayControl").data("id");
+            var Unit =jQuery("#Unit").data("id");
+            var FeverTemperature = jQuery('input[name="FeverTemperature"]').val();
+            var FeverAlarm =jQuery("#FeverAlarm").data("id");
+            var AccessDoor =jQuery("#AccessDoor").data("id");
+            var LowTemperature =jQuery("#LowTemperature").data("id");
+
+            var device_id = jQuery('#device_id').val();
+
+            var _this = jQuery(this);
+
+
+            _this.button('loading');
+            jQuery.post('command.php', {
+                id: device_id,
+                command: 'setMaskTemperatureConfig',
+
+                mask_detection:MaskDetection,
+                mask_alarm:MaskAlarm,
+                work_mode:WorkMode,
+                relay_output:RelayControl,
+                temp_unit:Unit,
+                fever_threshold:FeverTemperature,
+                fever_alarm:FeverAlarm,
+                temp_opendoor:AccessDoor,
+                temp_access:LowTemperature,
+
+            }, function (result) {
+                if (!result.success) {
+                    alert('Error');
+                    _this.button('reset');
+                } else {
+                    app.checkCommandStatus(result.data.id).done(function () {
+                        alert('Success');
+                        _this.button('reset');
+                    });
+                }
+            }, 'json');
+
+        });
+
+
     });
 </script>
 <?php

@@ -124,6 +124,28 @@ CREATE TABLE `records` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+--
+-- Table structure for table `temperature_records`
+--
+
+DROP TABLE IF EXISTS `temperature_records`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `temperature_records` (
+  `idd` int(19) NOT NULL,
+  `device_id` char(32) NOT NULL,
+  `checktime` bigint(30) NOT NULL DEFAULT '0',
+  `user_id` int(19) DEFAULT NULL,
+  `mask` tinyint(1) DEFAULT '0',
+  `temperature` decimal(10,2) DEFAULT NULL,
+  `rid` bigint(11) DEFAULT NULL,
+  PRIMARY KEY (`idd`,`device_id`,`checktime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+
 --
 -- Table structure for table `users`
 --
