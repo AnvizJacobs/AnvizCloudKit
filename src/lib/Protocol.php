@@ -319,7 +319,7 @@ class Protocol
      * @return array|bool
      * @Description:
      */
-    public static function FaceDevice($content = '')
+    public static function FaceDevice($content = '',$trans_photo = false)
     {
         $record = array();
         /** ID On Device */
@@ -333,6 +333,21 @@ class Protocol
         $record['temp_id'] = ord($content[5]);
         /** the data of face */
         $record['template'] = substr($content, 6);
+
+        //Encrypt template to picture
+        if($trans_photo){
+
+            $hex_data = bin2hex($record['template']);
+            $head = substr($hex_data , 0 , 8);
+            if($head=='f1f2f2f4'){
+                $hex_data = substr($hex_data, 8);
+            }
+
+            $bin_data = hex2bin($hex_data);
+            $record['template'] =$bin_data;
+        }
+
+
 
         return $record;
 
@@ -365,7 +380,7 @@ class Protocol
         return $result;
     }
 
-    public static function EnrollFace($content = '')
+    public static function EnrollFace($content = '',$trans_photo = false)
     {
         if (empty($content)) {
             return false;
@@ -381,6 +396,21 @@ class Protocol
         $result['sign'] = 2;
         $result['temp_id'] = ord($row[5]);
         $result['template'] = substr($row, 6);
+
+
+        //Encrypt template to picture
+        if($trans_photo){
+
+            $hex_data = bin2hex($result['template']);
+            $head = substr($hex_data , 0 , 8);
+            if($head=='f1f2f2f4'){
+                $hex_data = substr($hex_data, 8);
+            }
+
+            $bin_data = hex2bin($hex_data);
+            $result['template'] =$bin_data;
+        }
+
 
         return $result;
     }
