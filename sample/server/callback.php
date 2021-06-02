@@ -168,7 +168,7 @@ class callback implements AnvizInterface
     }
 
 
-    public function temperatureRecord($id, $command_id, $data)
+    public function temperatureRecord($id, $command_id, $data,$download_photo=true)
     {
         global $db;
 
@@ -189,6 +189,19 @@ class callback implements AnvizInterface
             $mask = $row['mask'];
             $temperature = $row['temperature'];
             $rid = $row['rid'];
+            //Need Download temperature picture from device
+            if($download_photo&&$rid){
+                $anvizCommand = new AnvizCommand();
+                $_data = $anvizCommand->getTemperaturePic($rid);
+                $id      = $_data['id'];
+                $params  = $_data['params'];
+                $command = $_data['command'];
+                $content = $_data['content'];
+
+                $sql = 'INSERT INTO device_command(id, device_id, command, content, status, params)
+            VALUES ("' . $id . '", "' . $device_id . '", "' . $command . '", "' . $content . '", 0, "' . base64_encode(json_encode($params)) . '")';
+                $db->query($sql);
+            }
 
             if($idd){
                 $sql    = 'SELECT * FROM temperature_records WHERE idd="' . $idd . '" AND device_id="' . $device_id . '" AND checktime="' . $checktime . '"';
@@ -221,6 +234,40 @@ class callback implements AnvizInterface
 
             $db->query('UPDATE device_command SET content="' . $content . '", status=0, params="' . base64_encode(json_encode($params)) . '" WHERE id="' . $command_id . '"');
         }
+
+        return true;
+    }
+
+
+    public function temperaturePic($id, $command_id, $data)
+    {
+        global $db;
+        global $log;
+
+        $sql    = 'SELECT * FROM device WHERE id="' . $id . '"';
+        $result = $db->query($sql);
+        if ($db->num_rows($result) <= 0) {
+            return false;
+        }
+
+        $device    = $db->fetch_array($result);
+
+        $pic = $data['pic'];
+        $rid = $data['rid'];
+
+        if(!$pic || !$rid){
+            return false;
+        }
+
+        $log->write('debug', 'temperaturePic   rid:' . $rid);
+
+
+        $filename = $device['id'].'-'. $data['rid'] . '.jpg';
+        $log->write('debug', 'temperaturePic   filename:' .$filename);
+
+        file_put_contents('../logs/'.$device['id'].'-'. $data['rid'] . '.jpg',$pic);
+
+        $this->updateCommand($command_id);
 
         return true;
     }

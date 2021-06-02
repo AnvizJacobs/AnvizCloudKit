@@ -742,6 +742,35 @@ class AnvizCommand
 
     /**
      * @author jacobs@anviz.com
+     * @param int $start
+     * @param int $limit
+     * @return array
+     * @description 获取新测温图片
+     * @params
+     *      rid
+     */
+    public function getTemperaturePic($rid)
+    {
+
+        $data  = array(
+            'rid' => $rid,
+        );
+        $content = Protocol::getTemperaturePic($data);
+        if (empty($content)) {
+            return false;
+        }
+
+        $id = Tools::createCommandId();
+        return array(
+            'id'      => $id,
+            'params'  => $data,
+            'command' => CMD_GETTEMPRECORDPIC,
+            'content' => base64_encode($content),
+        );
+    }
+
+    /**
+     * @author jacobs@anviz.com
      * @return bool|string
      * @description 测温配置
      */

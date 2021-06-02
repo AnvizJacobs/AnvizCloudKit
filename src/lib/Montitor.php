@@ -172,6 +172,14 @@ class Montitor
                 }
                 break;
 
+            case CMD_GETTEMPRECORDPIC:
+                $result = Protocol::TemperaturePic($data['content']);
+                $this->log->write('debug', 'actionTransport: ' . CMD_GETTEMPRECORDPIC );
+                if (!$this->callback->temperaturePic($device_id, $data['id'], $result)) {
+                    return Protocol::showError($token, $device_id, CMD_GETNEWTEMPRECORD);
+                }
+                break;
+
             default:
                 if (!$this->callback->other($device_id, $data['id'])) {
                     return Protocol::showError($token, $device_id, CMD_GETALLRECORD);
@@ -237,6 +245,14 @@ class Montitor
                 $result = Protocol::TemperatureRecordDevice($data['content']);
                 $this->log->write('debug', 'actionReport: Command - ' . $data['command'] . ', Data - ' . json_encode($result));
                 if (!$this->callback->temperatureRecord($device_id, $data['id'], $result)) {
+                    return Protocol::showError($token, $device_id, CMD_GETNEWTEMPRECORD);
+                }
+                break;
+
+            case CMD_GETTEMPRECORDPIC:
+                $result = Protocol::TemperaturePic($data['content']);
+                $this->log->write('debug', 'actionTransport: ' . CMD_GETTEMPRECORDPIC );
+                if (!$this->callback->temperaturePic($device_id, $data['id'], $result)) {
                     return Protocol::showError($token, $device_id, CMD_GETNEWTEMPRECORD);
                 }
                 break;

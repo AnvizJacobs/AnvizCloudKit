@@ -43,6 +43,8 @@ define('CMD_GETALLRECORD', 3001); //Download all attendance records form device
 define('CMD_GETNEWRECORD', 3002); //Download new attendance records from device
 
 define('CMD_GETNEWTEMPRECORD', 3005); //Download new temperature records from device
+define('CMD_GETTEMPRECORDPIC', 3006); //Download temperature picture from device
+
 define('CMD_SETMASKTEMP', 1112);//Set the temperature measurement configuration
 define('CMD_GETMASKTEMP', 1012);//Get the temperature measurement configuration
 
@@ -537,6 +539,30 @@ class Protocol
         }
 
         return $result;
+    }
+
+
+    public static function getTemperaturePic($data)
+    {
+        if (empty($data)) {
+            return false;
+        }
+        $pack =  pack("N", intval($data['rid'] / 0x00FFFFFFFF)) . pack("N", $data['rid']& 0x00FFFFFFFF);
+
+
+        return $pack;
+    }
+
+
+    public static function TemperaturePic($data = '')
+    {
+        if (empty($data)) {
+            return false;
+        }
+        $record['rid'] = (ord($data[0]) << 56) + (ord($data[1]) << 48) + (ord($data[2]) << 40) + (ord($data[3]) << 32) + (ord($data[4]) << 24) + (ord($data[5]) << 16) + (ord($data[6]) << 8) + ord($data[7]);
+        $record['pic'] = substr($data, 8);
+
+        return $record;
     }
 
     public static function RecordImport($content = '')
