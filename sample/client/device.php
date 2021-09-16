@@ -26,6 +26,13 @@ $device = $db->fetch_array($result);
     <div class="panel-heading">Device Information</div>
     <div class="panel-body">
         <div class="table-responsive">
+
+            <table class="table table-bordered">
+                <tr>
+                    <td colspan="6"><button id="btnOpendoor" type="button" class="btn btn-primary">Opendoor</button></td>
+                </tr>
+            </table>
+
             <table class="table table-bordered">
                 <tr>
                     <th>Device ID</th>
@@ -425,6 +432,25 @@ $device = $db->fetch_array($result);
                     });
                 }
             }, 'json');
+        });
+
+
+        jQuery('#btnOpendoor').click(function (e) {
+            var _this = jQuery(this);
+            _this.button('loading');
+            var device_id = jQuery('#device_id').val();
+            jQuery.post('command.php', {id: device_id, command: 'opendoor'}, function (result) {
+                if (!result.success) {
+                    alert('Error');
+                    _this.button('reset');
+                } else {
+                    console.log('opendoor success');
+                    app.checkCommandStatus(result.data.id).done(function () {
+                        _this.button('reset');
+                    });
+                }
+            }, 'json');
+
         });
 
         jQuery('#btnDownloadAllTemplates').click(function (e) {

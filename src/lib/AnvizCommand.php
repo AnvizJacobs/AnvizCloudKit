@@ -707,6 +707,18 @@ class AnvizCommand
         );
     }
 
+    public function opendoor()
+    {
+        $data  = array();
+
+        $id = Tools::createCommandId();
+        return array(
+            'id'      => $id,
+            'params'  => $data,
+            'command' => CMD_OPENDOOR,
+            'content' => '',
+        );
+    }
 
     /**
      * @author jacobs@anviz.com

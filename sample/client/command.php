@@ -26,7 +26,26 @@ $anvizCommand = new AnvizCommand();
 
 
 
-if ($command == 'downloadNewTemperatureRecords') {
+if ($command == 'opendoor') {
+
+    $data = $anvizCommand->opendoor();
+
+    $id      = $data['id'];
+    $params  = $data['params'];
+    $command = $data['command'];
+    $content = $data['content'];
+
+    $sql = 'INSERT INTO device_command(id, device_id, command, content, status, params)
+            VALUES ("' . $id . '", "' . $device_id . '", "' . $command . '", "' . $content . '", 0, "' . base64_encode(json_encode($params)) . '")';
+    $db->query($sql);
+
+    echo json_encode(array(
+        'success' => true,
+        'data'    => array(
+            'id' => $id,
+        ),
+    ));
+}elseif ($command == 'downloadNewTemperatureRecords') {
 
     $data = $anvizCommand->getNewTemperatureRecords(0, 100);
 
