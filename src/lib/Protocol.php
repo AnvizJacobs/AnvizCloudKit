@@ -48,7 +48,7 @@ define('CMD_GETTEMPRECORDPIC', 3006); //Download temperature picture from device
 define('CMD_SETMASKTEMP', 1112);//Set the temperature measurement configuration
 define('CMD_GETMASKTEMP', 1012);//Get the temperature measurement configuration
 
-define('CMD_OPENDOOR', 1013);//Open door
+define('CMD_OPENDOOR', 4003);//Open door
 
 
 class Protocol
