@@ -6,7 +6,7 @@
 
 ### 支持设备
 > `C2 Pro/W1/W2/OA1000`
-> `FaceDeep3/FaceDeep5/FaceDeep3-IRT/FaceDeep5-IRT`
+> `FaceDeep3/FaceDeep5/FaceDeep3-IRT/FaceDeep5-IRT/FaceDeep7 Pro`
 > `MBIO`
 
 ### 环境要求
