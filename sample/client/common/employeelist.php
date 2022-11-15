@@ -25,6 +25,7 @@ if (empty($id)) {
         <th>Card</th>
         <th>Group</th>
         <th>Finger Signed</th>
+        <th>Face Signed</th>
         <th>Is Admin</th>
     </tr>
     <?php
@@ -56,6 +57,10 @@ if (empty($id)) {
                         <?php endfor;?>
                       </ul>
                     </div>
+                </td>
+                <td>
+                    <button type="button" class="btnEnrollFace btn btn-primary btn-xs" data-idd="<?php echo $row['idd'];?>">Enroll Face</button>
+                    <button type="button" class="btnDownloadFace btn btn-primary btn-xs" data-idd="<?php echo $row['idd'];?>">Download Face</button>
                 </td>
                 <td><?php echo $row['is_admin'];?></td>
             </tr>

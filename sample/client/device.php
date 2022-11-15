@@ -382,6 +382,62 @@ $device = $db->fetch_array($result);
             }, 'json');
             return false;
         });
+
+
+        jQuery('body').on('click', '.btnDownloadFace', function(e){
+            e.preventDefault();
+            var _this = jQuery(this);
+            _this.parents('.btn-group').find('button').button('loading');
+            var device_id = jQuery('#device_id').val();
+            var idd = _this.attr('data-idd');
+            jQuery.post('command.php', {id: device_id, command: 'getFace', idd: idd}, function (result) {
+                if (!result.success) {
+                    alert('Error');
+                    _this.button('reset');
+                } else {
+                    app.checkCommandStatus(result.data.id).done(function () {
+                        jQuery.get('ajax.php', {
+                            method: 'get_employee',
+                            idd: idd
+                        }, function(result){
+                            _this.append('&nbsp;Downloaded');
+                            _this.parents('.btn-group').find('button').button('reset');
+                        }, 'json');
+                    });
+                }
+
+            }, 'json');
+            return false;
+        });
+
+
+        jQuery('body').on('click', '.btnEnrollFace', function(e){
+            e.preventDefault();
+            var _this = jQuery(this);
+            _this.parents('.btn-group').find('button').button('loading');
+            var device_id = jQuery('#device_id').val();
+            var idd = _this.attr('data-idd');
+            var temp_id = 20;
+            jQuery.post('command.php', {id: device_id, command: 'enrollFinger', idd: idd, temp_id:temp_id}, function (result) {
+                if (!result.success) {
+                    alert('Error');
+                    _this.button('reset');
+                } else {
+                    app.checkCommandStatus(result.data.id).done(function () {
+                        jQuery.get('ajax.php', {
+                            method: 'get_employee',
+                            idd: idd
+                        }, function(result){
+                            _this.append('&nbsp;Registered');
+                            _this.parents('.btn-group').find('button').button('reset');
+                        }, 'json');
+                    });
+                }
+            }, 'json');
+            return false;
+        });
+
+
         jQuery('#btnDownloadAllRecords').click(function (e) {
             var _this = jQuery(this);
             _this.button('loading');

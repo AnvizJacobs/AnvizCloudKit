@@ -414,4 +414,40 @@ if ($command == 'opendoor') {
             'id' => $id,
         ),
     ));
+}elseif ($command == 'getFace') {
+    $idd  = $_REQUEST['idd'];
+
+    if (empty($idd)) {
+        echo json_encode(array(
+            'success' => false,
+        ));
+        exit;
+    }
+
+    $sql    = 'SELECT * FROM employee WHERE idd="' . $idd . '"';
+    $result = $db->query($sql);
+    if ($db->num_rows($result) <= 0) {
+        echo json_encode(array(
+            'success' => false,
+        ));
+        exit;
+    }
+    $row = $db->fetch_array($result);
+
+    $data    = $anvizCommand->getFace($idd);
+    $id      = $data['id'];
+    $params  = $data['params'];
+    $command = $data['command'];
+    $content = $data['content'];
+
+    $sql = 'INSERT INTO device_command(id, device_id, command, content, status, params)
+            VALUES ("' . $id . '", "' . $device_id . '", "' . $command . '", "' . $content . '", 0, "' . base64_encode(json_encode($params)) . '")';
+    $db->query($sql);
+
+    echo json_encode(array(
+        'success' => true,
+        'data'    => array(
+            'id' => $id,
+        ),
+    ));
 }

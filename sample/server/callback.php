@@ -384,6 +384,46 @@ class callback implements AnvizInterface
         return true;
     }
 
+    public function face($id, $command_id, $row)
+    {
+        global $db;
+        global $log;
+
+        $sql = 'SELECT * FROM device WHERE id="' . $id . '"';
+        $result = $db->query($sql);
+        if ($db->num_rows($result) <= 0) {
+            return false;
+        }
+
+        $device = $db->fetch_array($result);
+        $device_id = $device['id'];
+        $user_id = $device['user_id'];
+
+        $idd = $row['idd'];
+        $sign = $row['sign'];
+        $temp_id = $row['temp_id'];
+        $template = base64_encode($row['template']);
+
+        $log->write('debug', 'idd:' . $idd);
+        $log->write('debug', 'Temp_id:' . $temp_id);
+        $log->write('debug', 'template lenth :' . strlen($row['template']));
+
+        $sql = 'SELECT * FROM employee_template WHERE idd="' . $idd . '" AND sign=' . $sign . ' AND temp_id=' . $temp_id;
+        $result = $db->query($sql);
+        if ($db->num_rows($result) > 0) {
+            $sql = 'UPDATE employee_template SET content="' . $template . '" WHERE idd="' . $idd . '" AND sign=' . $sign . ' AND temp_id=' . $temp_id;
+            $db->query($sql);
+        } else {
+            $sql = 'INSERT INTO employee_template(idd, sign, temp_id, content) VALUES ("' . $idd . '", "' . $sign . '", "' . $temp_id . '", "' . $template . '")';
+            $db->query($sql);
+        }
+
+
+        $this->updateCommand($command_id);
+
+        return true;
+    }
+
     public function enrollFinger($id, $command_id, $data)
     {
         global $db;
@@ -418,10 +458,11 @@ class callback implements AnvizInterface
         $row        = $db->fetch_array($result);
         $fingersign = $row['fingersign'];
         global $log;
+        $log->write('debug', 'idd:' . $idd);
         $log->write('debug', 'Temp_id:' . $temp_id);
         $log->write('debug', 'Fingersign:' . $fingersign);
 
-        if (!(pow(2, $temp_id) & $fingersign)) {
+        if ($temp_id!=20&&!(pow(2, $temp_id) & $fingersign)) {
             $fingersign += pow(2, $temp_id);
             $db->query('UPDATE employee set fingersign=' . $fingersign . ' WHERE idd="' . $idd . '"');
         }

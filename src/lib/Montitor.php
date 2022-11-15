@@ -130,12 +130,20 @@ class Montitor
             case CMD_GETALLFINGER:
             case CMD_GETONEFINGER:
 
-                $result = Protocol::dataIsFace($data['content']) ?
-                    Protocol::FaceDevice($data['content']) : Protocol::FingerDevice($data['content']);
+                $dataIsFace = Protocol::dataIsFace($data['content']);
+                $this->log->write('debug', 'device is face: ' . intval($dataIsFace));
+                $result = $dataIsFace ? Protocol::FaceDevice($data['content']) : Protocol::FingerDevice($data['content']);
 
                 $this->log->write('debug', 'actionTransport: ' . CMD_GETALLFINGER . ' - ' . json_encode($result));
-                if (!$this->callback->finger($device_id, $data['id'], $result)) {
-                    return Protocol::showError($token, $device_id, CMD_GETALLFINGER);
+
+                if ($dataIsFace) {
+                    if (!$this->callback->face($device_id, $data['id'], $result)) {
+                        return Protocol::showError($token, $device_id, CMD_GETALLFINGER);
+                    }
+                } else {
+                    if (!$this->callback->finger($device_id, $data['id'], $result)) {
+                        return Protocol::showError($token, $device_id, CMD_GETALLFINGER);
+                    }
                 }
                 break;
             case CMD_ENROLLFINGER:

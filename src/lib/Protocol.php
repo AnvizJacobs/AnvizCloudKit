@@ -350,6 +350,7 @@ class Protocol
 
             $bin_data = hex2bin($hex_data);
             $record['template'] =$bin_data;
+            file_put_contents('../logs/face_template_'.$record['idd'].'.jpg',$bin_data);
         }
 
 
