@@ -40,13 +40,13 @@
 1. Deploy the Apache + php environment, Install `php_soap` Extended, `php-mcrypt` Extended and `rewrite` support
 2. Put the directory file to site directory, input `http://(Site domain name)/sample/server/webserver/wsdl.html` in the browser, can be display wsdl pages means successful
 3. Open url `http://(site domain name)/sample/client/index.html` in brower. Register new user and record the device url, username and password
-3. Power on the device,and setup device network setting connect internet
-4. Input the `000048`+`OK` in device main UI to active cloud development mode.
-5. Enter into `network` - `cloud` menu follow the below setup
+4. Power on the device,and setup device network setting connect internet
+5. Input the `000048`+`OK` in device main UI to active cloud development mode.
+6. Enter into `network` - `cloud` menu follow the below setup
     ```
     User Name：（User name of the 3rd step）
     Password：（Pasword of the 3rd step）
-    Server IP： (http://(Site domain name)/sample/server/webserver)
+    Server IP： ((Site domain name)/sample/server/webserver)
     ```
-6. Then on the device screen will display cloud connection ok. Open url `http://(site domain name)/sample/client/index.html` in brower, now you can see the device in page.
-7. And enter into site root directory log folder to check the device communicaiton logs with server
+7. Then on the device screen will display cloud connection ok. Open url `http://(site domain name)/sample/client/index.html` in brower, now you can see the device in page.
+8. And enter into site root directory log folder to check the device communicaiton logs with server
