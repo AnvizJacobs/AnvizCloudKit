@@ -103,7 +103,7 @@ CREATE TABLE `employee_template` (
   `idd` int(19) NOT NULL,
   `sign` int(2) NOT NULL DEFAULT '1',
   `temp_id` int(2) NOT NULL DEFAULT '0',
-  `content` text,
+  `content` longtext,
   PRIMARY KEY (`idd`,`sign`,`temp_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
