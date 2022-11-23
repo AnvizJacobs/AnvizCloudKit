@@ -2,5 +2,5 @@
 	RewriteEngine on
 	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteCond %{REQUEST_FILENAME} !-f
-	RewriteRule ^webserver/(.*)$ webserver.php/$1 [QSA,PT,L]
+	RewriteRule ^webserver/(.*)$ sample/server/Webserver.php/$1 [QSA,PT,L]
 </IfModule>
